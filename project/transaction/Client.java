@@ -39,67 +39,67 @@ public class Client {
 	new BufferedReader(new InputStreamReader(System.in));
 
     public static void main(String args[]) {
-	launch();
+    	launch();
 
-	readNextLine();
-        int numThreads = Integer.parseInt(currentLine);
-	readNextLine();
-	System.out.println("[M] Launching " + numThreads + " threads.");
-	for (int i=1; i<=numThreads; i++) {
-	    new myThread(String.valueOf(i)).start();
-	}
+    	readNextLine();
+            int numThreads = Integer.parseInt(currentLine);
+    	readNextLine();
+    	System.out.println("[M] Launching " + numThreads + " threads.");
+    	for (int i=1; i<=numThreads; i++) {
+    	    new myThread(String.valueOf(i)).start();
+    	}
 
-	try {
-	    Thread.sleep(TESTTIMEOUT);
-	} catch (InterruptedException e) {
-	    System.err.println("[M] Sleep interrupted.");
-	    System.exit(1);
-	}
-	System.err.println("[M] Test timed out.");
-	cleanUpExit(2);
+    	try {
+    	    Thread.sleep(TESTTIMEOUT);
+    	} catch (InterruptedException e) {
+    	    System.err.println("[M] Sleep interrupted.");
+    	    System.exit(1);
+    	}
+    	System.err.println("[M] Test timed out.");
+    	cleanUpExit(2);
     }
 
     private static void readNextLine() {
-	try {
-	    currentLine = scriptReader.readLine();
-	} catch (IOException e) {
-	    System.err.println("Cannot read next line.");
-	    System.exit(1);
-	}
+    	try {
+    	    currentLine = scriptReader.readLine();
+    	} catch (IOException e) {
+    	    System.err.println("Cannot read next line.");
+    	    System.exit(1);
+    	}
     }
 
     private static void launch() {
-	String toLaunch = ResourceManager.DefaultRMIName;
-	String rmiPort = System.getProperty("rmiPort");
+    	String toLaunch = ResourceManager.DefaultRMIName;
+    	String rmiPort = System.getProperty("rmiPort");
 
-	try {
-	    Runtime.getRuntime().exec(new String[]{
-		"sh",
-		"-c",
-		"/usr/bin/java -classpath .. -DrmiRegPort=" + rmiPort +
-		" -Djava.security.policy=./security-policy transaction.ResourceManagerImpl >>" +
-		LOGDIR + toLaunch + LOGSUFFIX + " 2>&1"});
-	} catch (IOException e) {
-	    System.err.println("Cannot launch " + toLaunch + ": " + e);
-	    cleanUpExit(2);
-	}
-	System.out.println(toLaunch + " launched");
+    	try {
+    	    Runtime.getRuntime().exec(new String[]{
+    		"sh",
+    		"-c",
+    		"/usr/bin/java -classpath .. -DrmiRegPort=" + rmiPort +
+    		" -Djava.security.policy=./security-policy transaction.ResourceManagerImpl >>" +
+    		LOGDIR + toLaunch + LOGSUFFIX + " 2>&1"});
+    	} catch (IOException e) {
+    	    System.err.println("Cannot launch " + toLaunch + ": " + e);
+    	    cleanUpExit(2);
+    	}
+    	System.out.println(toLaunch + " launched");
 
-	try {
-	    Thread.sleep(LAUNCHSLEEP);
-	} catch (InterruptedException e) {
-	    System.err.println("Sleep interrupted.");
-	    System.exit(1);
-	}
+    	try {
+    	    Thread.sleep(LAUNCHSLEEP);
+    	} catch (InterruptedException e) {
+    	    System.err.println("Sleep interrupted.");
+    	    System.exit(1);
+    	}
 
-	try {
-	    rm = (ResourceManager)Naming.lookup("//:" + rmiPort +
-						"/" + toLaunch);
-	} catch (Exception e) {
-	    System.err.println("Cannot bind to " + toLaunch + ": " + e);
-	    cleanUpExit(2);
-	}
-	System.out.println("Bound to " + toLaunch);
+    	try {
+    	    rm = (ResourceManager)Naming.lookup("//:" + rmiPort +
+    						"/" + toLaunch);
+    	} catch (Exception e) {
+    	    System.err.println("Cannot bind to " + toLaunch + ": " + e);
+    	    cleanUpExit(2);
+    	}
+    	System.out.println("Bound to " + toLaunch);
     }
 
     private static void cleanUpExit(int status) {

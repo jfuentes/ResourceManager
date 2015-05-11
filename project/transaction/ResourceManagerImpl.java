@@ -25,82 +25,105 @@ public class ResourceManagerImpl
     private Flights flights = Flights.getInstance();
     private Reservations reservations = Reservations.getInstance();
 
+    //lock Manager
+    private static LockManager lm = new LockManager();
+
+    //first part of Data id
+    private static final String FLIGHT = "flight-";
+    private static final String CARS = "car-";
+    private static final String HOTEL = "hotel-";
+
     public static void main(String args[]) {
-	System.setSecurityManager(new RMISecurityManager());
+	     System.setSecurityManager(new RMISecurityManager());
 
-	String rmiName = System.getProperty("rmiName");
-	if (rmiName == null || rmiName.equals("")) {
-	    rmiName = ResourceManager.DefaultRMIName;
-	}
+	     String rmiName = System.getProperty("rmiName");
+	     if (rmiName == null || rmiName.equals("")) {
+	        rmiName = ResourceManager.DefaultRMIName;
+	     }
 
-	String rmiRegPort = System.getProperty("rmiRegPort");
-	if (rmiRegPort != null && !rmiRegPort.equals("")) {
-	    rmiName = "//:" + rmiRegPort + "/" + rmiName;
-	}
+	     String rmiRegPort = System.getProperty("rmiRegPort");
+    	if (rmiRegPort != null && !rmiRegPort.equals("")) {
+    	    rmiName = "//:" + rmiRegPort + "/" + rmiName;
+    	}
 
-	try {
-	    ResourceManagerImpl obj = new ResourceManagerImpl();
-	    Naming.rebind(rmiName, obj);
-	    System.out.println("RM bound");
-	}
-	catch (Exception e) {
-	    System.err.println("RM not bound:" + e);
-	    System.exit(1);
-	}
+    	try {
+    	    ResourceManagerImpl obj = new ResourceManagerImpl();
+    	    Naming.rebind(rmiName, obj);
+    	    System.out.println("RM bound");
+    	}
+    	catch (Exception e) {
+    	    System.err.println("RM not bound:" + e);
+    	    System.exit(1);
+    	}
     }
 
 
     public ResourceManagerImpl() throws RemoteException {
-	flightcounter = 0;
-	flightprice = 0;
-	carscounter = 0;
-	carsprice = 0;
-	roomscounter = 0;
-	roomsprice = 0;
-	flightprice = 0;
+    	flightcounter = 0;
+    	flightprice = 0;
+    	carscounter = 0;
+    	carsprice = 0;
+    	roomscounter = 0;
+    	roomsprice = 0;
+    	flightprice = 0;
 
-	xidCounter = 1;
+    	xidCounter = 1;
     }
 
 
     // TRANSACTION INTERFACE
     public int start()
-	throws RemoteException {
-	return (xidCounter++);
+    	throws RemoteException {
+    	return (xidCounter++);
     }
 
-    public boolean commit(int xid)
-	throws RemoteException,
-	       TransactionAbortedException,
+    public boolean commit(int xid) throws RemoteException, TransactionAbortedException,
 	       InvalidTransactionException {
-	System.out.println("Committing");
-	return true;
+    	System.out.println("Committing");
+    	return true;
     }
 
-    public void abort(int xid)
-	throws RemoteException,
-               InvalidTransactionException {
-	return;
+    public void abort(int xid)throws RemoteException, InvalidTransactionException {
+	    return;
     }
 
 
     // ADMINISTRATIVE INTERFACE
     public boolean addFlight(int xid, String flightNum, int numSeats, int price)
-	throws RemoteException,
-	       TransactionAbortedException,
-	       InvalidTransactionException {
-	flightcounter += numSeats;
-	flightprice = price;
-	return true;
+	throws RemoteException, TransactionAbortedException, InvalidTransactionException {
+
+      //first get a lock a update the table
+      if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
+        return false;
+      }
+
+      //the transaction got the X-lock
+      //add/uptade the flight in the table
+      flights.addFlight(flightNum, numSeats, price);
+
+      //check the integrity
+
+
+    	return true;
     }
 
     public boolean deleteFlight(int xid, String flightNum)
-	throws RemoteException,
-	       TransactionAbortedException,
-	       InvalidTransactionException {
-	flightcounter = 0;
-	flightprice = 0;
-	return true;
+    	throws RemoteException,
+    	       TransactionAbortedException,
+    	       InvalidTransactionException {
+
+      //first get a lock a update the table
+      if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
+         return false;
+      }
+
+      //the transaction got the X-lock
+      //add/uptade the flight in the table
+      cars.addFlight(flightNum, numSeats, price);
+
+      //check the integrity
+
+    	return true;
     }
 
     public boolean addRooms(int xid, String location, int numRooms, int price)
