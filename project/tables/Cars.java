@@ -4,10 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Cars{
+	private static Cars instance=null; //instance of Cars table
 	private Map<String, Car> table;
 
-	public Cars(){
+	private Cars(){
 		table = new HashMap<String, Car>();
+	}
+
+	public static Cars getInstance(){
+		if(instance==null)
+			instance = new Cars();
+		return instance;
 	}
 
 	/**
@@ -15,14 +22,17 @@ public class Cars{
 	 **/
 
 	public boolean addCar(String location, int price, int numCars){
-		if(table.get(location)!=null){
-			//the flight already exists
-			return false;
-		}
-		table.put(location, new Car(location, price, numCars, numCars));
+		if(!table.containsKey(location)){
+			//the car already exists, we update
+			Car car = table.get(location);
+			car.setPrice(price); //update to the new price
+			car.setNumCars(numCars+car.getNumCars()); //add the new cars
+			table.put(location, car);
+		}else
+			table.put(location, new Car(location, price, numCars, numCars));
 		return true;
 	}
-	
+
 	public boolean deleteCar(String location){
 		if(table.get(location) == null){
 			return false;
@@ -30,7 +40,7 @@ public class Cars{
 		table.remove(location);
 		return true;
 	}
-	
+
 	public Car getCar(String location){
 		return table.get(location);
 	}

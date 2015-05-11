@@ -1,4 +1,4 @@
-RMIREGPORT = 1099
+RMIREGPORT = 2100
 PROJECTROOT = ..
 
 all : server client
@@ -28,4 +28,3 @@ clean :
 	rmic -classpath $(PROJECTROOT) -d $(PROJECTROOT) transaction.$*
 
 .PHONY : runserver runclient clean
-

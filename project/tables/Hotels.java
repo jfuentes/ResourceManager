@@ -4,10 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Hotels{
+	private static Hotels instance = null;
 	private Map<String, Hotel> table;
 
-	public Hotels(){
+	private Hotels(){
 		table = new HashMap<String, Hotel>();
+	}
+
+	public static Hotels getInstance(){
+		if(instance==null)
+			instance = new Hotels();
+		return instance;
 	}
 
 	/**
@@ -15,14 +22,16 @@ public class Hotels{
 	 **/
 
 	public boolean addHotel(String location, int price, int numRooms){
-		if(table.get(location)!=null){
-			//the flight already exists
-			return false;
-		}
-		table.put(location, new Hotel(location, price, numRooms, numRooms));
+		if(!table.containsKey(location)){
+			Hotel hotel = table.get(location);
+			hotel.setPrice(price); //update to the new price
+			hotel.setNumRooms(numRooms+hotel.getNumRooms()); //add the new cars
+			table.put(location, hotel);
+		}else
+			table.put(location, new Hotel(location, price, numRooms, numRooms));
 		return true;
 	}
-	
+
 	public boolean deleteHotel(String location){
 		if(table.get(location) == null){
 			return false;
@@ -30,7 +39,7 @@ public class Hotels{
 		table.remove(location);
 		return true;
 	}
-	
+
 	public Hotel getHotel(String location){
 		return table.get(location);
 	}
