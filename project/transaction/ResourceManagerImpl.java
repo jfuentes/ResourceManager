@@ -18,7 +18,7 @@ extends java.rmi.server.UnicastRemoteObject
 implements ResourceManager {
 
 	// in this toy, we don't care about location or flight number
-	//protected int flightcounter, flightprice, carscounter, carsprice, roomscounter, roomsprice;
+	protected int flightcounter, flightprice, carscounter, carsprice, roomscounter, roomsprice;
 
 	protected int xidCounter;
 
@@ -33,29 +33,29 @@ implements ResourceManager {
 	private Hotels actHotels = Hotels.getInstance();
 	private Flights actFlights = Flights.getInstance();
 	private Reservations actReservations = Reservations.getInstance();
-	
+
 	//Hashtable to keep track of the changes
 	private HashMap <Integer, ArrayList<Operation>> operations = new HashMap <Integer, ArrayList<Operation>>();
-	
+
 	private class Operation{
 		private String tableName;
 		private String primKey;
-		
+
 		public Operation(String tableName, String primKey){
 			this.tableName = tableName;
 			this.primKey = primKey;
 		}
-		
+
 		public String getTableName(){
 			return tableName;
 		}
-		
+
 		public String getPrimKey(){
 			return primKey;
 		}
 
 	}
-	
+
 	//lock Manager
 	private static LockManager lm = new LockManager();
 
@@ -90,14 +90,14 @@ implements ResourceManager {
 
 
 	public ResourceManagerImpl() throws RemoteException {
-/*		flightcounter = 0;
+		/*		flightcounter = 0;
 		flightprice = 0;
 		carscounter = 0;
 		carsprice = 0;
 		roomscounter = 0;
 		roomsprice = 0;
 		flightprice = 0;
-*/
+		 */
 		xidCounter = 1;
 	}
 
@@ -161,8 +161,15 @@ implements ResourceManager {
 			throws RemoteException,
 			TransactionAbortedException,
 			InvalidTransactionException {
+		try{
+			if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+				return false;
+			}
+		}catch(DeadlockException e){
+			//deal with the deadlock
+		}
 		ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
-		Operation newOperation = new Operation(CARS, location);
+		Operation newOperation = new Operation(HOTEL, location);
 		this.actHotels.addRooms(location, price, numRooms);
 		if(this.operations.containsKey(xid)){
 			tmpOperations = this.operations.get(xid);
@@ -180,9 +187,15 @@ implements ResourceManager {
 			throws RemoteException,
 			TransactionAbortedException,
 			InvalidTransactionException {
-		
+		try{
+			if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+				return false;
+			}
+		}catch(DeadlockException e){
+			//deal with the deadlock
+		}
 		ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
-		Operation newOperation = new Operation(CARS, location);
+		Operation newOperation = new Operation(HOTEL, location);
 		this.actHotels.deleteRooms(location, numRooms);
 		if(this.operations.containsKey(xid)){
 			tmpOperations = this.operations.get(xid);
@@ -192,7 +205,7 @@ implements ResourceManager {
 			tmpOperations.add(newOperation);
 			this.operations.put(xid, tmpOperations);
 		}
-	
+
 		return true;
 	}
 
@@ -200,6 +213,13 @@ implements ResourceManager {
 			throws RemoteException,
 			TransactionAbortedException,
 			InvalidTransactionException {
+		try{
+			if(!lm.lock(xid, CARS + location, LockManager.WRITE)){
+				return false;
+			}
+		}catch(DeadlockException e){
+			//deal with the deadlock
+		}
 		ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
 		Operation newOperation = new Operation(CARS, location);
 		this.actCars.addCars(location, price, numCars);
@@ -219,8 +239,25 @@ implements ResourceManager {
 			throws RemoteException,
 			TransactionAbortedException,
 			InvalidTransactionException {
-	//	carscounter = 0;
-	//	carsprice = 0;
+		try{
+			if(!lm.lock(xid, CARS + location, LockManager.WRITE)){
+				return false;
+			}
+		}catch(DeadlockException e){
+			//deal with the deadlock
+		}
+		ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
+		Operation newOperation = new Operation(CARS, location);
+		this.actCars.deleteCars(location, numCars);
+		if(this.operations.containsKey(xid)){
+			tmpOperations = this.operations.get(xid);
+			tmpOperations.add(newOperation);
+			this.operations.put(xid, tmpOperations);
+		}else{
+			tmpOperations.add(newOperation);
+			this.operations.put(xid, tmpOperations);
+		}
+
 		return true;
 	}
 
