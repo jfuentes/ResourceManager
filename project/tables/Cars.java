@@ -48,4 +48,8 @@ public class Cars{
 	public Car getCar(String location){
 		return table.get(location);
 	}
+
+	public boolean containsCar(String location){
+    return table.containsKey(location);
+  }
 }

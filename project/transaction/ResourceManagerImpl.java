@@ -42,10 +42,10 @@ public class ResourceManagerImpl
     private HashMap<Integer, ArrayList<OperationPair>> activeTransactions;
 
     //first part of Data id
-    private static final String FLIGHT = "flight";
-    private static final String CAR = "car";
-    private static final String HOTEL = "hotel";
-    private static final String RESERVATION = "reservation";
+    public static final String FLIGHT = "flight";
+    public static final String CAR = "car";
+    public static final String HOTEL = "hotel";
+    public static final String RESERVATION = "reservation";
 
     public static void main(String args[]) {
 	     System.setSecurityManager(new RMISecurityManager());
@@ -108,14 +108,23 @@ public class ResourceManagerImpl
       for(OperationPair op: operations){
         //go over each operation and merge it in the non-active database
         switch(op.getTable()){
-          case FLIGHT: flights.addFlight(op.getKey(), actFlights.getFlight(op.getKey()));
-                  break;
+          case FLIGHT: if(actFlights.containsFlight(op.getKey())) //if the flight exits, we just update it
+                          flights.addFlight(op.getKey(), actFlights.getFlight(op.getKey()));
+                        else  //otherwise we need to delete it in non-active db
+                          flights.deleteFlight(op.getKey());
+                        break;
 
-          case CAR:    cars.addCar(op.getKey(), actCars.getCar(op.getKey()));
-                  break;
+          case CAR:    if(actCars.containsCar(op.getKey()))
+                          cars.addCar(op.getKey(), actCars.getCar(op.getKey()));
+                       else
+                          cars.deleteCar(op.getKey());
+                       break;
 
-          case HOTEL:  hotels.addHotel(op.getKey(), actHotels.getHotel(op.getKey()));
-                  break;
+          case HOTEL:  if(actHotels.containsHotel(op.getKey()))
+                          hotels.addHotel(op.getKey(), actHotels.getHotel(op.getKey()));
+                       else
+                          hotels.deleteHotel(op.getKey());
+                       break;
 
           case RESERVATION:  reservations.addReservations(op.getKey(), actReservations.getReservations(op.getKey()));
                         break;
@@ -339,6 +348,16 @@ public class ResourceManagerImpl
     public boolean dieAfterPointerSwitch()
 	throws RemoteException {
 	return true;
+    }
+
+    public String toStringNonActiveDB(String nameTable){
+      String s="table: "+nameTable+"\n";
+      switch(nameTable){
+        case FLIGHT: s=flights.toString();
+                     break;
+        default:     break;
+      }
+      return s;
     }
 
 

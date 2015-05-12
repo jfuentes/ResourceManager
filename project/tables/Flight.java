@@ -51,4 +51,8 @@ public class Flight{
     this.numAvail=numAvail;
   }
 
+  public String toString(){
+    return flightNum+"  "+price+"  "+numSeats+"  "+numAvail;
+  }
+
 }

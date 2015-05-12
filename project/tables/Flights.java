@@ -3,6 +3,7 @@ package tables;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Flights{
@@ -35,6 +36,7 @@ public class Flights{
       Flight flight = table.get(flightNum);
 			flight.setPrice(price); //update to the new price
 			flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new seats
+      flight.setNumAvail(numSeats+flight.getNumAvail()); //add the new seats
 			table.put(flightNum, flight);
     }else
       table.put(flightNum, new Flight(flightNum, price, numSeats, numSeats));
@@ -56,5 +58,18 @@ public class Flights{
 
   public Flight getFlight(String flightNum){
     return table.get(flightNum);
+  }
+
+  public boolean containsFlight(String flightNum){
+    return table.containsKey(flightNum);
+  }
+
+  public String toString(){
+    String s="";
+    Set<String> keys = table.keySet();
+    for(String key: keys){
+      s+="| "+key+" | "+table.get(key).toString()+" |\n";
+    }
+    return s;
   }
 }

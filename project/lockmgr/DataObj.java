@@ -8,19 +8,19 @@ public class DataObj extends TrxnObj
     // TrxnObj:: protected int lockType;
     // TrxnObj:: public static final int READ = 0;
     // TrxnObj:: public static final int WRITE = 1;
-    
+
     DataObj() {
         super();
     }
-    
+
     DataObj(int xid, String strData, int lockType) {
         super(xid, strData, lockType);
     }
-    
+
     public int hashCode() {
         return strData.hashCode();
     }
-    
+
     public int key() {
         return strData.hashCode();
     }

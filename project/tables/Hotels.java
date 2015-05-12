@@ -47,4 +47,8 @@ public class Hotels{
 	public Hotel getHotel(String location){
 		return table.get(location);
 	}
+
+	public boolean containsHotel(String location){
+    return table.containsKey(location);
+  }
 }

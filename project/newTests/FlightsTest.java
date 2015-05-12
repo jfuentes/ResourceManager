@@ -15,8 +15,18 @@ class FlightsTest {
 
     }
       test1();
-	     //test2();
+      System.out.println(rm.toStringNonActiveDB(rm.FLIGHT));
+      System.exit(0);
     }
+
+    /**
+    * Each test has the following operations:
+    * - add x y z: add/update a flight, where x is the flightNum, y the price and z the numSeats
+    * - del x: delete a flight, x is the flightNum
+    * - sl x: sleep the transaction for x miliseconds
+    * - c: commit
+    * - a: abort
+    **/
 
     static void test1()
     {
@@ -24,18 +34,18 @@ class FlightsTest {
       //start transaction
       Transaction t1, t2;
     	try{
-        t1 = new Transaction(rm.start(), "add 1 1000 100 add 2 2000 200 c");
-    	  t2 = new Transaction(rm.start(), "add 3 3000 300 add 4 2000 100 c");
+        t1 = new Transaction(rm.start(), "add 1 1000 100 sl 100 add 2 2000 200 del 1 add 7 5000 300 c");
+    	  t2 = new Transaction(rm.start(), "add 1 3000 300 add 4 2000 100 add 1 3500 100 del 7 c");
 
 
     	t1.start();
     	t2.start();
-    /*	try {
+    	try {
     	    t1.join();
     	    t2.join();
     	} catch (Exception e) {
         System.out.println("Exception in the threads");
-    	}*/
+    	}
       }catch(RemoteException e){
         System.out.println("Remote Exception by doing operations over the db");
       }
@@ -84,7 +94,10 @@ class FlightsTest {
 
 
     		    }
-    		    else if (opcode.equalsIgnoreCase("sl")) {
+    		    else if (opcode.equalsIgnoreCase("c")) {
+    			         rm.abort(xid);
+            }
+            else if (opcode.equalsIgnoreCase("sl")) {
     			    String param = st.nextToken();
     			    int sleepTime = Integer.parseInt(param);
     			    try {
