@@ -37,11 +37,15 @@ public class Cars{
 		table.put(location, car);
 	}
 
-	public boolean deleteCar(String location){
-		if(table.get(location) == null){
+	public boolean deleteCar(String location, int numCars){
+		if(!table.containsKey(location)){
 			return false;
 		}
-		table.remove(location);
+		Car car = table.get(location);
+		if(car.getNumAvail() < numCars)
+			return false;
+		car.setNumAvail(car.getNumAvail()-NumCars); //add the new cars
+		table.put(location, car);
 		return true;
 	}
 

@@ -202,8 +202,25 @@ public class ResourceManagerImpl
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-    	roomscounter += numRooms;
-    	roomsprice = price;
+      try{
+     	  if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+    				return false;
+    	  }
+		  }catch(DeadlockException e){
+     			//deal with the deadlock
+     	}
+      ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
+	    Operation newOperation = new Operation(HOTEL, location);
+    	this.actHotels.addRooms(location, price, numRooms);
+    	if(this.operations.containsKey(xid)){
+    		tmpOperations = this.operations.get(xid);
+    		tmpOperations.add(newOperation);
+    		this.operations.put(xid, tmpOperations);
+    	}else{
+    		tmpOperations.add(newOperation);
+    		this.operations.put(xid, tmpOperations);
+    	}
+
     	return true;
     }
 
@@ -211,28 +228,79 @@ public class ResourceManagerImpl
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-    	roomscounter = 0;
-    	roomsprice = 0;
-    	return true;
+      try{
+    			if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+    				return false;
+    	    }
+      }catch(DeadlockException e){
+     			//deal with the deadlock
+     	}
+     	ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
+     	Operation newOperation = new Operation(HOTEL, location);
+     	this.actHotels.deleteRooms(location, numRooms);
+     	if(this.operations.containsKey(xid)){
+     		tmpOperations = this.operations.get(xid);
+     		tmpOperations.add(newOperation);
+     		this.operations.put(xid, tmpOperations);
+     	}else{
+     		tmpOperations.add(newOperation);
+     		this.operations.put(xid, tmpOperations);
+     	}
+
+     	return true;
     }
 
     public boolean addCars(int xid, String location, int numCars, int price)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-    	carscounter += numCars;
-    	carsprice = price;
-    	return true;
+     try{
+      if(!lm.lock(xid, CARS + location, LockManager.WRITE)){
+     			return false;
+     	}
+     }catch(DeadlockException e){
+     		//deal with the deadlock
+     }
+     ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
+     Operation newOperation = new Operation(CARS, location);
+     this.actCars.addCars(location, price, numCars);
+     if(this.operations.containsKey(xid)){
+     		tmpOperations = this.operations.get(xid);
+     		tmpOperations.add(newOperation);
+   			this.operations.put(xid, tmpOperations);
+  	 }else{
+     		tmpOperations.add(newOperation);
+     		this.operations.put(xid, tmpOperations);
+     }
+
+     return true;
     }
 
     public boolean deleteCars(int xid, String location, int numCars)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-    	carscounter = 0;
-    	carsprice = 0;
-    	return true;
+     try{
+      	if(!lm.lock(xid, CARS + location, LockManager.WRITE)){
+    				return false;
+    		}
+    }catch(DeadlockException e){
+    			//deal with the deadlock
     }
+    ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
+    Operation newOperation = new Operation(CARS, location);
+    this.actCars.deleteCars(location, numCars);
+    if(this.operations.containsKey(xid)){
+    	tmpOperations = this.operations.get(xid);
+    	tmpOperations.add(newOperation);
+    	this.operations.put(xid, tmpOperations);
+    }else{
+    	tmpOperations.add(newOperation);
+    	this.operations.put(xid, tmpOperations);
+    }
+
+    return true;
+  }
 
     public boolean newCustomer(int xid, String custName)
 	throws RemoteException,
