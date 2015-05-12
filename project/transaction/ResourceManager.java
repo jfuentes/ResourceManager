@@ -2,6 +2,8 @@ package transaction;
 
 import java.rmi.*;
 
+import lockmgr.DeadlockException;
+
 /** 
  * Interface for a simple Resource Manager for the Distributed Travel
  * Reservation System.
@@ -87,11 +89,12 @@ public interface ResourceManager extends Remote {
      * @throws RemoteException on communications failure.
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
+     * @throws DeadlockException 
      */
     public boolean addFlight(int xid, String flightNum, int numSeats, int price) 
 	throws RemoteException, 
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException, DeadlockException; 
     /**
      * Delete an entire flight.
      * Implies whole deletion of the flight: all seats, all reservations.

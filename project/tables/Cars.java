@@ -21,23 +21,27 @@ public class Cars{
 	 * Methods to add, update, remove and search tuples on the table
 	 **/
 
-	public boolean addCar(String location, int price, int numCars){
-		if(!table.containsKey(location)){
-			//the car already exists, we update
-			Car car = table.get(location);
-			car.setPrice(price); //update to the new price
-			car.setNumCars(numCars+car.getNumCars()); //add the new cars
-			table.put(location, car);
-		}else
-			table.put(location, new Car(location, price, numCars, numCars));
+	public boolean addCars(String location, int price, int numCars){
+		Car car = table.get(location);
+		if(!table.containsKey(location)){//no existing cars
+			car = new Car(location, price, numCars, numCars);
+		}else{//update existing cars
+			car.setPrice(Math.max(price,  car.getPrice()));
+			car.setNumCars(car.getNumCars()+numCars);
+			car.setNumAvail(car.getNumAvail()+numCars);
+		}
+		table.put(location, car);
 		return true;
 	}
 
-	public boolean deleteCar(String location){
-		if(table.get(location) == null){
+	public boolean deleteCars(String location, int numCars){
+		if(!table.containsKey(location)){
 			return false;
 		}
-		table.remove(location);
+		Car car = table.get(location);
+		if(car.getNumAvail() < numCars)
+			return false;
+		car.setNumAvail(car.getNumAvail()-numCars);
 		return true;
 	}
 
