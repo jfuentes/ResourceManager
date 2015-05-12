@@ -25,7 +25,7 @@ public class Reservations{
 	}
 
 	public boolean addReservation(String custName, int resvType, int resvKey){
-		if(!table.containsKey(custName)){
+		if(table.containsKey(custName)){
 			//We assume that if the customer already exists we add a new reservation
 			ArrayList<ResvPair> resvPairs = table.get(custName);
 			resvPairs.add(new ResvPair(resvType, resvKey));
@@ -46,6 +46,14 @@ public class Reservations{
 		ArrayList<ResvPair> reservations = table.get(custName);
 		reservations.remove(new ResvPair(resvType, resvKey));
 		return true;
+	}
+
+	public ArrayList<ResvPair> getReservations(String custName){
+		return table.get(custName);
+	}
+
+	public void addReservations(String custName, ArrayList<ResvPair> array){
+		table.put(custName, array);
 	}
 
 	//combine resvType and resvKey as a value pair

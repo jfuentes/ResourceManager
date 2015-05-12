@@ -2,7 +2,7 @@ package transaction;
 
 import java.rmi.*;
 
-/** 
+/**
  * Interface for a simple Resource Manager for the Distributed Travel
  * Reservation System.
  * <p>
@@ -39,8 +39,8 @@ public interface ResourceManager extends Remote {
      *
      * @throws RemoteException on communications failure.
      */
-    public int start() 
-	throws RemoteException; 
+    public int start()
+	throws RemoteException;
     /**
      * Commit transaction.
      *
@@ -51,10 +51,10 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public boolean commit(int xid) 
-	throws RemoteException, 
+    public boolean commit(int xid)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
     /**
      * Abort transaction.
      *
@@ -63,11 +63,11 @@ public interface ResourceManager extends Remote {
      * @throws RemoteException on communications failure.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public void abort(int xid) 
-	throws RemoteException, 
-	       InvalidTransactionException; 
+    public void abort(int xid)
+	throws RemoteException,
+	       InvalidTransactionException;
 
-    
+
     //////////
     // ADMINISTRATIVE INTERFACE
     //////////
@@ -88,10 +88,10 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public boolean addFlight(int xid, String flightNum, int numSeats, int price) 
-	throws RemoteException, 
+    public boolean addFlight(int xid, String flightNum, int numSeats, int price)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
     /**
      * Delete an entire flight.
      * Implies whole deletion of the flight: all seats, all reservations.
@@ -105,13 +105,13 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public boolean deleteFlight(int xid, String flightNum) 
-	throws RemoteException, 
+    public boolean deleteFlight(int xid, String flightNum)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
-    
+	       InvalidTransactionException;
+
     /**
-     * Add rooms to a location.  
+     * Add rooms to a location.
      * This should look a lot like addFlight, only keyed on a location
      * instead of a flight number.
      *
@@ -123,8 +123,8 @@ public interface ResourceManager extends Remote {
      *
      * @see #addFlight
      */
-    public boolean addRooms(int xid, String location, int numRooms, int price) 
-	throws RemoteException, 
+    public boolean addRooms(int xid, String location, int numRooms, int price)
+	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException;
     /**
@@ -141,15 +141,15 @@ public interface ResourceManager extends Remote {
      *
      * @see #deleteFlight
      */
-    public boolean deleteRooms(int xid, String location, int numRooms) 
-	throws RemoteException, 
+    public boolean deleteRooms(int xid, String location, int numRooms)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
-    
-    /** 
+	       InvalidTransactionException;
+
+    /**
      * Add cars to a location.
      * Cars have the same semantics as hotels (see addRooms).
-     * 
+     *
      * @return true on success, false on failure.
      *
      * @throws RemoteException on communications failure.
@@ -159,10 +159,10 @@ public interface ResourceManager extends Remote {
      * @see #addRooms
      * @see #addFlight
      */
-    public boolean addCars(int xid, String location, int numCars, int price) 
-	throws RemoteException, 
+    public boolean addCars(int xid, String location, int numCars, int price)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
     /**
      * Delete cars from a location.
      * Cars have the same semantics as hotels.
@@ -176,15 +176,15 @@ public interface ResourceManager extends Remote {
      * @see #deleteRooms
      * @see #deleteFlight
      */
-    public boolean deleteCars(int xid, String location, int numCars) 
-	throws RemoteException, 
+    public boolean deleteCars(int xid, String location, int numCars)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
-    
-    /** 
+	       InvalidTransactionException;
+
+    /**
      * Add a new customer to database.  Should return success if
      * customer already exists.
-     * 
+     *
      * @param xid id of transaction.
      * @param custName name of customer.
      * @return true on success, false on failure.
@@ -193,10 +193,10 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public boolean newCustomer(int xid, String custName) 
+    public boolean newCustomer(int xid, String custName)
 	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
     /**
      * Delete this customer and associated reservations.
      *
@@ -208,10 +208,10 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public boolean deleteCustomer(int xid, String custName) 
+    public boolean deleteCustomer(int xid, String custName)
 	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
 
     //////////
@@ -228,16 +228,16 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public int queryFlight(int xid, String flightNum) 
-	throws RemoteException, 
+    public int queryFlight(int xid, String flightNum)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
     /** Return the price of a seat on this flight. */
-    public int queryFlightPrice(int xid, String flightNum) 
-	throws RemoteException, 
+    public int queryFlightPrice(int xid, String flightNum)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
     /** Return the number of rooms available at a location. */
     public int queryRooms(int xid, String location)
@@ -246,22 +246,22 @@ public interface ResourceManager extends Remote {
 	       InvalidTransactionException;
 
     /** Return the price of rooms at this location. */
-    public int queryRoomsPrice(int xid, String location) 
-	throws RemoteException, 
+    public int queryRoomsPrice(int xid, String location)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
     /** Return the number of cars available at a location. */
-    public int queryCars(int xid, String location) 
-	throws RemoteException, 
+    public int queryCars(int xid, String location)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
     /** Return the price of rental cars at this location. */
-    public int queryCarsPrice(int xid, String location) 
-	throws RemoteException, 
+    public int queryCarsPrice(int xid, String location)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
     /* Return the total price of all reservations held for a customer. */
     public int queryCustomerBill(int xid, String custName)
@@ -269,7 +269,7 @@ public interface ResourceManager extends Remote {
 		   TransactionAbortedException,
 		   InvalidTransactionException;
 
-    
+
     //////////
     // RESERVATION INTERFACE
     //////////
@@ -285,19 +285,19 @@ public interface ResourceManager extends Remote {
      * @throws TransactionAbortedException if transaction was aborted.
      * @throws InvalidTransactionException if transaction id is invalid.
      */
-    public boolean reserveFlight(int xid, String custName, String flightNum) 
+    public boolean reserveFlight(int xid, String custName, String flightNum)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException;
 
     /** Reserve a car for this customer at the specified location. */
-    public boolean reserveCar(int xid, String custName, String location) 
-	throws RemoteException, 
+    public boolean reserveCar(int xid, String custName, String location)
+	throws RemoteException,
 	       TransactionAbortedException,
-	       InvalidTransactionException; 
+	       InvalidTransactionException;
 
     /** Reserve a room for this customer at the specified location. */
-    public boolean reserveRoom(int xid, String custName, String location) 
+    public boolean reserveRoom(int xid, String custName, String location)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException;
@@ -306,7 +306,7 @@ public interface ResourceManager extends Remote {
     //////////
     // TECHNICAL/TESTING INTERFACE
     //////////
-    /** 
+    /**
      * Shutdown gracefully. Stop accepting new transactions, wait for
      * running transactions to terminate, and clean up disk state.
      * When this RM restarts, it should not attempt to recover its
@@ -315,9 +315,9 @@ public interface ResourceManager extends Remote {
      * @return true on success, false on failure.
      * @throws RemoteException on communications failure.
      */
-    public boolean shutdown() 
+    public boolean shutdown()
 	throws RemoteException;
-    /** 
+    /**
      * Call exit immediately.  Used to simulate a system failure such
      * as a power outage.
      * <p>
@@ -325,9 +325,9 @@ public interface ResourceManager extends Remote {
      *
      * @return true on success, false on failure.
      */
-    public boolean dieNow() 
+    public boolean dieNow()
 	throws RemoteException;
-    /** 
+    /**
      * Sets a flag so that the RM fails in the middle of the next
      * commit operation.  Specifically, using shadow paging, you
      * should call System.exit() after the updated tables have been
@@ -339,9 +339,9 @@ public interface ResourceManager extends Remote {
      *
      * @return true on success, false on failure.
      */
-    public boolean dieBeforePointerSwitch() 
+    public boolean dieBeforePointerSwitch()
 	throws RemoteException;
-    /** 
+    /**
      * Sets a flag so that the RM fails in the middle of the next
      * commit operation.  Unlike the above, however, the RM exits
      * AFTER the on-disk pointer is updated, but before the commit
@@ -352,7 +352,7 @@ public interface ResourceManager extends Remote {
      *
      * @return true on success, false on failure.
      */
-    public boolean dieAfterPointerSwitch() 
+    public boolean dieAfterPointerSwitch()
 	throws RemoteException;
 
 

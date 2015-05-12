@@ -30,15 +30,19 @@ public class Flights{
   **/
 
   public boolean addFlight(String flightNum, int price, int numSeats){
-    if(!table.containsKey(flightNum)){
+    if(table.containsKey(flightNum)){
       //the flight already exists, update
       Flight flight = table.get(flightNum);
 			flight.setPrice(price); //update to the new price
-			flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new cars
+			flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new seats
 			table.put(flightNum, flight);
     }else
       table.put(flightNum, new Flight(flightNum, price, numSeats, numSeats));
     return true;
+  }
+
+  public void addFlight(String flightNum, Flight flight){
+    table.put(flightNum, flight);
   }
 
   public boolean deleteFlight(String flightNum){

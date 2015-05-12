@@ -22,7 +22,7 @@ public class Cars{
 	 **/
 
 	public boolean addCar(String location, int price, int numCars){
-		if(!table.containsKey(location)){
+		if(table.containsKey(location)){
 			//the car already exists, we update
 			Car car = table.get(location);
 			car.setPrice(price); //update to the new price
@@ -31,6 +31,10 @@ public class Cars{
 		}else
 			table.put(location, new Car(location, price, numCars, numCars));
 		return true;
+	}
+
+	public void addCar(String location, Car car){
+		table.put(location, car);
 	}
 
 	public boolean deleteCar(String location){

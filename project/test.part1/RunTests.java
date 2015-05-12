@@ -33,7 +33,7 @@ public class RunTests {
 	dbf.setValidating(false);
 	dbf.setIgnoringElementContentWhitespace(true);
 	dbf.setIgnoringComments(true);
-	
+
 	DocumentBuilder db = null;
 	try {
 	    db = dbf.newDocumentBuilder();
@@ -95,11 +95,11 @@ public class RunTests {
 	    boolean clearData = DEFAULTCLEARDATA;
 	    int fPoints = DEFAULTFPOINTS;
 	    String fNext = null;
-	       
+
 	    attrs = test.getAttributes();
 	    for (int i=0; i<attrs.getLength(); i++) {
 		Node attr = attrs.item(i);
-		
+
 		if (attr.getNodeName().equals("id")) {
 		    id = attr.getNodeValue();
 		    //System.out.println("ID set to: " + id);
@@ -117,11 +117,11 @@ public class RunTests {
 		    System.exit(1);
 		}
 	    }
-		
+
 	    if (id == null) {
 		System.err.println("No ID given");
 		System.exit(1);
-	    } 
+	    }
 	    if (fPoints < 0) {
 		System.err.println("fpoints has to be >=0");
 		System.exit(1);
@@ -130,10 +130,10 @@ public class RunTests {
 		System.out.println("Skipping test: " + id);
 		continue;
 	    }
-	    
+
 	    String fmsg = test.getFirstChild().getNodeValue().trim();
 	    //System.out.println("fmsg is: " + fmsg);
-	    
+
 	    if (clearData) {
 		System.out.println("Clearing data");
 		try {
@@ -193,7 +193,7 @@ public class RunTests {
 		if (ENDTESTID.equals(fNext)) {
 		    nextTest = null;
 		    break;
-		}  
+		}
 		nextTest = fNext;
 	    } else {
 		System.err.println("Test " + id +" errored (" + exitVal + ")");

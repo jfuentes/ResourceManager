@@ -22,7 +22,7 @@ public class Hotels{
 	 **/
 
 	public boolean addHotel(String location, int price, int numRooms){
-		if(!table.containsKey(location)){
+		if(table.containsKey(location)){
 			Hotel hotel = table.get(location);
 			hotel.setPrice(price); //update to the new price
 			hotel.setNumRooms(numRooms+hotel.getNumRooms()); //add the new cars
@@ -30,6 +30,10 @@ public class Hotels{
 		}else
 			table.put(location, new Hotel(location, price, numRooms, numRooms));
 		return true;
+	}
+
+	public void addHotel(String location, Hotel hotel){
+		table.put(location, hotel);
 	}
 
 	public boolean deleteHotel(String location){

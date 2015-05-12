@@ -4,6 +4,10 @@ import tables.*;
 import lockmgr.*;
 import java.rmi.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
+
 /**
  * Resource Manager for the Distributed Travel Reservation System.
  *
@@ -25,13 +29,23 @@ public class ResourceManagerImpl
     private Flights flights = Flights.getInstance();
     private Reservations reservations = Reservations.getInstance();
 
+    //copy for active database
+    private Cars actCars;
+    private Hotels actHotels;
+    private Flights actFlights;
+    private Reservations actReservations;
+
     //lock Manager
-    private static LockManager lm = new LockManager();
+    private static LockManager lm;
+
+    //transactions
+    private HashMap<Integer, ArrayList<OperationPair>> activeTransactions;
 
     //first part of Data id
-    private static final String FLIGHT = "flight-";
-    private static final String CARS = "car-";
-    private static final String HOTEL = "hotel-";
+    private static final String FLIGHT = "flight";
+    private static final String CAR = "car";
+    private static final String HOTEL = "hotel";
+    private static final String RESERVATION = "reservation";
 
     public static void main(String args[]) {
 	     System.setSecurityManager(new RMISecurityManager());
@@ -59,27 +73,58 @@ public class ResourceManagerImpl
 
 
     public ResourceManagerImpl() throws RemoteException {
-    	flightcounter = 0;
-    	flightprice = 0;
-    	carscounter = 0;
-    	carsprice = 0;
-    	roomscounter = 0;
-    	roomsprice = 0;
-    	flightprice = 0;
+    	actCars=Cars.getInstance();
+      actHotels=Hotels.getInstance();
+      actFlights=Flights.getInstance();
+      actReservations=Reservations.getInstance();
 
-    	xidCounter = 1;
+      activeTransactions = new HashMap<Integer, ArrayList<OperationPair>>();
+      lm = new LockManager();
+
+    	xidCounter = 0;
     }
 
 
     // TRANSACTION INTERFACE
     public int start()
     	throws RemoteException {
-    	return (xidCounter++);
+      xidCounter++;
+
+      activeTransactions.put(xidCounter, new ArrayList<OperationPair>());
+
+      return xidCounter;
     }
 
     public boolean commit(int xid) throws RemoteException, TransactionAbortedException,
 	       InvalidTransactionException {
     	System.out.println("Committing");
+
+      if(!activeTransactions.containsKey(xid))
+        return false;
+
+      //reflect the changes over the non-active databases
+      ArrayList<OperationPair> operations = activeTransactions.get(xid);
+
+      for(OperationPair op: operations){
+        //go over each operation and merge it in the non-active database
+        switch(op.getTable()){
+          case FLIGHT: flights.addFlight(op.getKey(), actFlights.getFlight(op.getKey()));
+                  break;
+
+          case CAR:    cars.addCar(op.getKey(), actCars.getCar(op.getKey()));
+                  break;
+
+          case HOTEL:  hotels.addHotel(op.getKey(), actHotels.getHotel(op.getKey()));
+                  break;
+
+          case RESERVATION:  reservations.addReservations(op.getKey(), actReservations.getReservations(op.getKey()));
+                        break;
+
+          default: throw new InvalidTransactionException(xid, "Problem merging values to non-active db");
+        }
+      }
+
+      lm.unlockAll(xid);
     	return true;
     }
 
@@ -92,16 +137,25 @@ public class ResourceManagerImpl
     public boolean addFlight(int xid, String flightNum, int numSeats, int price)
 	throws RemoteException, TransactionAbortedException, InvalidTransactionException {
 
-      //first get a lock a update the table
-      if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
-        return false;
+      //first get a lock for updating the table
+      try{
+        if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
+          return false;
+        }
+      }catch(DeadlockException e){
+        //deal with the deadlock
       }
 
       //the transaction got the X-lock
       //add/uptade the flight in the table
-      flights.addFlight(flightNum, numSeats, price);
+      actFlights.addFlight(flightNum, numSeats, price);
 
-      //check the integrity
+
+      //keep tracking of operations
+      ArrayList<OperationPair> operations = activeTransactions.get(xid);
+      operations.add(new OperationPair(FLIGHT, flightNum));
+      activeTransactions.put(xid, operations);
+
 
 
     	return true;
@@ -113,15 +167,24 @@ public class ResourceManagerImpl
     	       InvalidTransactionException {
 
       //first get a lock a update the table
-      if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
-         return false;
+      try{
+        if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
+          return false;
+        }
+      }catch(DeadlockException e){
+        //deal with the deadlock
       }
 
       //the transaction got the X-lock
       //add/uptade the flight in the table
-      cars.addFlight(flightNum, numSeats, price);
+      actFlights.deleteFlight(flightNum);
 
-      //check the integrity
+      //keep tracking of operations
+      ArrayList<OperationPair> operations = activeTransactions.get(xid);
+      operations.add(new OperationPair(FLIGHT, flightNum));
+      activeTransactions.put(xid, operations);
+
+
 
     	return true;
     }
@@ -130,50 +193,50 @@ public class ResourceManagerImpl
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	roomscounter += numRooms;
-	roomsprice = price;
-	return true;
+    	roomscounter += numRooms;
+    	roomsprice = price;
+    	return true;
     }
 
     public boolean deleteRooms(int xid, String location, int numRooms)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	roomscounter = 0;
-	roomsprice = 0;
-	return true;
+    	roomscounter = 0;
+    	roomsprice = 0;
+    	return true;
     }
 
     public boolean addCars(int xid, String location, int numCars, int price)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	carscounter += numCars;
-	carsprice = price;
-	return true;
+    	carscounter += numCars;
+    	carsprice = price;
+    	return true;
     }
 
     public boolean deleteCars(int xid, String location, int numCars)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	carscounter = 0;
-	carsprice = 0;
-	return true;
+    	carscounter = 0;
+    	carsprice = 0;
+    	return true;
     }
 
     public boolean newCustomer(int xid, String custName)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	return true;
+	    return true;
     }
 
     public boolean deleteCustomer(int xid, String custName)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	return true;
+	    return true;
     }
 
 
@@ -182,28 +245,28 @@ public class ResourceManagerImpl
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	return flightcounter;
+	    return flightcounter;
     }
 
     public int queryFlightPrice(int xid, String flightNum)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	return flightprice;
+	    return flightprice;
     }
 
     public int queryRooms(int xid, String location)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	return roomscounter;
+	    return roomscounter;
     }
 
     public int queryRoomsPrice(int xid, String location)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	return roomsprice;
+	    return roomsprice;
     }
 
     public int queryCars(int xid, String location)
@@ -277,5 +340,24 @@ public class ResourceManagerImpl
 	throws RemoteException {
 	return true;
     }
+
+
+  	private class OperationPair{
+  		private String table;
+  		private String key;
+
+  		public OperationPair(String table, String key){
+  			this.table = table;
+  			this.key = key;
+  		}
+
+  		public String getTable(){
+  			return table;
+  		}
+
+  		public String getKey(){
+  			return key;
+  		}
+  	}
 
 }

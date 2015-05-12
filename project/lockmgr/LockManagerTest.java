@@ -3,7 +3,7 @@ package lockmgr;
 import java.util.*;
 
 class LockManagerTest {
-    
+
     static LockManager lm = new LockManager();
 
     public static void main (String[] args) {
@@ -30,7 +30,7 @@ class LockManagerTest {
     {
 	System.out.println("Lock conversion test");
 	Transaction t1 = new Transaction(1, "rl a sl 10 wl a ua");
-	Transaction t2 = new Transaction(2, "rl a sl 2000 ua"); 
+	Transaction t2 = new Transaction(2, "rl a sl 2000 ua");
 	t1.start();
 	t2.start();
 	try {
@@ -39,19 +39,19 @@ class LockManagerTest {
 	} catch (Exception e) {
 	}
     }
-	
+
 
     static class Transaction extends Thread {
-	
+
 	int xid;
 	StringTokenizer st;
-	
-	public Transaction(int xid, String ops) 
+
+	public Transaction(int xid, String ops)
 	{
 	    this.xid = xid;
 	    st = new StringTokenizer(ops);
 	}
-	
+
 	public void run()
 	{
 	    try {
