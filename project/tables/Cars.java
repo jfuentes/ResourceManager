@@ -2,26 +2,21 @@ package tables;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Cars{
-	private static Cars instance=null; //instance of Cars table
 	private Map<String, Car> table;
 
-	private Cars(){
+	public Cars(){
 		table = new HashMap<String, Car>();
 	}
 
-	public static Cars getInstance(){
-		if(instance==null)
-			instance = new Cars();
-		return instance;
-	}
 
 	/**
 	 * Methods to add, update, remove and search tuples on the table
 	 **/
 
-	public boolean addCar(String location, int price, int numCars){
+	public boolean addCars(String location, int price, int numCars){
 		if(table.containsKey(location)){
 			//the car already exists, we update
 			Car car = table.get(location);
@@ -37,16 +32,20 @@ public class Cars{
 		table.put(location, car);
 	}
 
-	public boolean deleteCar(String location, int numCars){
+	public boolean deleteCars(String location, int numCars){
 		if(!table.containsKey(location)){
 			return false;
 		}
 		Car car = table.get(location);
 		if(car.getNumAvail() < numCars)
 			return false;
-		car.setNumAvail(car.getNumAvail()-NumCars); //add the new cars
+		car.setNumAvail(car.getNumAvail()-numCars); //add the new cars
 		table.put(location, car);
 		return true;
+	}
+
+	public void deleteCar(String location){
+		table.remove(location);
 	}
 
 	public Car getCar(String location){
@@ -56,4 +55,13 @@ public class Cars{
 	public boolean containsCar(String location){
     return table.containsKey(location);
   }
+
+	public String toString(){
+		String s="";
+		Set<String> keys = table.keySet();
+		for(String key: keys){
+			s+="| "+key+" | "+table.get(key).toString()+" |\n";
+		}
+		return s;
+	}
 }

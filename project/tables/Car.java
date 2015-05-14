@@ -46,4 +46,8 @@ public class Car{
 	public void setNumAvail(int numAvail){
 		this.numAvail = numAvail;
 	}
+
+	public String toString(){
+    return location+"  "+price+"  "+numCars+"  "+numAvail;
+   }
 }

@@ -2,26 +2,21 @@ package tables;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Hotels{
-	private static Hotels instance = null;
 	private Map<String, Hotel> table;
 
-	private Hotels(){
+	public Hotels(){
 		table = new HashMap<String, Hotel>();
 	}
 
-	public static Hotels getInstance(){
-		if(instance==null)
-			instance = new Hotels();
-		return instance;
-	}
 
 	/**
 	 * Methods to add, update, remove and search tuples on the table
 	 **/
 
-	public boolean addHotel(String location, int price, int numRooms){
+	public boolean addRooms(String location, int price, int numRooms){
 		if(table.containsKey(location)){
 			Hotel hotel = table.get(location);
 			hotel.setPrice(price); //update to the new price
@@ -50,5 +45,30 @@ public class Hotels{
 
 	public boolean containsHotel(String location){
     return table.containsKey(location);
-  }
+  	}
+
+	public boolean deleteRooms(String location, int numRooms){
+		if(!table.containsKey(location)){
+			return false;
+		}
+		Hotel hotel = table.get(location);
+		if(hotel.getNumAvail() < numRooms)
+			return false;
+		hotel.setNumAvail(hotel.getNumAvail()-numRooms); //add the new rooms
+		table.put(location, hotel);
+		return true;
+	}
+
+	public String toString(){
+		String s="";
+		Set<String> keys = table.keySet();
+		for(String key: keys){
+			s+="| "+key+" | "+table.get(key).toString()+" |\n";
+		}
+		return s;
+	}
+
+
+
+
 }

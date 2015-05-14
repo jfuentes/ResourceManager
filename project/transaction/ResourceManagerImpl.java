@@ -24,10 +24,10 @@ public class ResourceManagerImpl
     protected int xidCounter;
 
     //get instances of tables
-    private Cars cars = Cars.getInstance();
-    private Hotels hotels = Hotels.getInstance();
-    private Flights flights = Flights.getInstance();
-    private Reservations reservations = Reservations.getInstance();
+    private Cars cars;
+    private Hotels hotels;
+    private Flights flights;
+    private Reservations reservations;
 
     //copy for active database
     private Cars actCars;
@@ -73,10 +73,14 @@ public class ResourceManagerImpl
 
 
     public ResourceManagerImpl() throws RemoteException {
-    	actCars=Cars.getInstance();
-      actHotels=Hotels.getInstance();
-      actFlights=Flights.getInstance();
-      actReservations=Reservations.getInstance();
+    	actCars=new Cars();
+      cars= new Cars();
+      actHotels=new Hotels();
+      hotels = new Hotels();
+      actFlights= new Flights();
+      flights = new Flights();
+      actReservations= new Reservations();
+      reservations = new Reservations();
 
       activeTransactions = new HashMap<Integer, ArrayList<OperationPair>>();
       lm = new LockManager();
@@ -130,6 +134,7 @@ public class ResourceManagerImpl
                         break;
 
           default: throw new InvalidTransactionException(xid, "Problem merging values to non-active db");
+
         }
       }
 
@@ -202,118 +207,149 @@ public class ResourceManagerImpl
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-      try{
-     	  if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
-    				return false;
-    	  }
-		  }catch(DeadlockException e){
-     			//deal with the deadlock
-     	}
-      ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
-	    Operation newOperation = new Operation(HOTEL, location);
-    	this.actHotels.addRooms(location, price, numRooms);
-    	if(this.operations.containsKey(xid)){
-    		tmpOperations = this.operations.get(xid);
-    		tmpOperations.add(newOperation);
-    		this.operations.put(xid, tmpOperations);
-    	}else{
-    		tmpOperations.add(newOperation);
-    		this.operations.put(xid, tmpOperations);
-    	}
+           //first get a lock for updating the table
+           try{
+             if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+               return false;
+             }
+           }catch(DeadlockException e){
+             //deal with the deadlock
+           }
 
-    	return true;
+           //the transaction got the X-lock
+           //add/uptade the hotel in the table
+           actHotels.addRooms(location, numRooms, price);
+
+
+           //keep tracking of operations
+           ArrayList<OperationPair> operations = activeTransactions.get(xid);
+           operations.add(new OperationPair(HOTEL, location));
+           activeTransactions.put(xid, operations);
+
+
+           return true;
     }
 
     public boolean deleteRooms(int xid, String location, int numRooms)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-      try{
-    			if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
-    				return false;
-    	    }
-      }catch(DeadlockException e){
-     			//deal with the deadlock
-     	}
-     	ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
-     	Operation newOperation = new Operation(HOTEL, location);
-     	this.actHotels.deleteRooms(location, numRooms);
-     	if(this.operations.containsKey(xid)){
-     		tmpOperations = this.operations.get(xid);
-     		tmpOperations.add(newOperation);
-     		this.operations.put(xid, tmpOperations);
-     	}else{
-     		tmpOperations.add(newOperation);
-     		this.operations.put(xid, tmpOperations);
-     	}
-
-     	return true;
+          //first get a lock for updating the table
+          try{
+            if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+              return false;
+            }
+          }catch(DeadlockException e){
+            //deal with the deadlock
+          }
+          //the transaction got the X-lock
+          //add/uptade the hotel in the table
+          if(actHotels.deleteRooms(location, numRooms)){
+             //keep tracking of operations
+             ArrayList<OperationPair> operations = activeTransactions.get(xid);
+             operations.add(new OperationPair(HOTEL, location));
+             activeTransactions.put(xid, operations);
+             return true;
+          }else
+            return false;
     }
 
     public boolean addCars(int xid, String location, int numCars, int price)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-     try{
-      if(!lm.lock(xid, CARS + location, LockManager.WRITE)){
-     			return false;
-     	}
-     }catch(DeadlockException e){
-     		//deal with the deadlock
-     }
-     ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
-     Operation newOperation = new Operation(CARS, location);
-     this.actCars.addCars(location, price, numCars);
-     if(this.operations.containsKey(xid)){
-     		tmpOperations = this.operations.get(xid);
-     		tmpOperations.add(newOperation);
-   			this.operations.put(xid, tmpOperations);
-  	 }else{
-     		tmpOperations.add(newOperation);
-     		this.operations.put(xid, tmpOperations);
-     }
+          //first get a lock for updating the table
+          try{
+             if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
+                 return false;
+             }
+          }catch(DeadlockException e){
+              //deal with the deadlock
+          }
 
-     return true;
+          //the transaction got the X-lock
+          //add/uptade the Car in the table
+          actCars.addCars(location, numCars, price);
+
+          //keep tracking of operations
+          ArrayList<OperationPair> operations = activeTransactions.get(xid);
+          operations.add(new OperationPair(CAR, location));
+          activeTransactions.put(xid, operations);
+
+          return true;
     }
 
     public boolean deleteCars(int xid, String location, int numCars)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-     try{
-      	if(!lm.lock(xid, CARS + location, LockManager.WRITE)){
-    				return false;
-    		}
-    }catch(DeadlockException e){
-    			//deal with the deadlock
-    }
-    ArrayList<Operation> tmpOperations = new ArrayList<Operation>();
-    Operation newOperation = new Operation(CARS, location);
-    this.actCars.deleteCars(location, numCars);
-    if(this.operations.containsKey(xid)){
-    	tmpOperations = this.operations.get(xid);
-    	tmpOperations.add(newOperation);
-    	this.operations.put(xid, tmpOperations);
-    }else{
-    	tmpOperations.add(newOperation);
-    	this.operations.put(xid, tmpOperations);
-    }
-
-    return true;
+          //first get a lock for updating the table
+          try{
+           if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
+              return false;
+           }
+          }catch(DeadlockException e){
+           //deal with the deadlock
+          }
+          //the transaction got the X-lock
+          //add/uptade the car in the table
+          if(actCars.deleteCars(location, numCars)){
+            //keep tracking of operations
+            ArrayList<OperationPair> operations = activeTransactions.get(xid);
+            operations.add(new OperationPair(CAR, location));
+            activeTransactions.put(xid, operations);
+            return true;
+          }else
+            return false;
   }
 
     public boolean newCustomer(int xid, String custName)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	    return true;
+         //first get a lock for updating the table
+         try{
+            if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
+                return false;
+            }
+         }catch(DeadlockException e){
+                 //deal with the deadlock
+            }
+
+         //the transaction got the X-lock
+         //add/uptade the reservation in the table
+         if(actReservations.addCustomer(custName)){
+            //keep tracking of operations
+            ArrayList<OperationPair> operations = activeTransactions.get(xid);
+            operations.add(new OperationPair(RESERVATION, custName));
+            activeTransactions.put(xid, operations);
+            return true;
+         }else
+            return false;
     }
 
     public boolean deleteCustomer(int xid, String custName)
 	throws RemoteException,
 	       TransactionAbortedException,
 	       InvalidTransactionException {
-	    return true;
+          //first get a lock for updating the table
+          try{
+             if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
+                 return false;
+             }
+          }catch(DeadlockException e){
+             //deal with the deadlock
+          }
+          //the transaction got the X-lock
+          //add/uptade the reservation in the table
+          if(actReservations.deleteCustomer(custName)){
+             //keep tracking of operations
+             ArrayList<OperationPair> operations = activeTransactions.get(xid);
+             operations.add(new OperationPair(RESERVATION, custName));
+             activeTransactions.put(xid, operations);
+             return true;
+          }else
+              return false;
     }
 
 
@@ -421,8 +457,14 @@ public class ResourceManagerImpl
     public String toStringNonActiveDB(String nameTable){
       String s="table: "+nameTable+"\n";
       switch(nameTable){
-        case FLIGHT: s=flights.toString();
+        case FLIGHT: s+=flights.toString();
                      break;
+        case CAR: s+=cars.toString();
+                  break;
+        case HOTEL: s+=hotels.toString();
+                    break;
+        case RESERVATION: s+=reservations.toString();
+                          break;
         default:     break;
       }
       return s;

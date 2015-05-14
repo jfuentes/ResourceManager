@@ -11,17 +11,27 @@ public class Reservations{
 	* The table is represented with a Hash Table where the primary key is custName
 	* and a list of pairs (resvType, resvKey)
 	**/
-	private static Reservations instance = null;
 	private Map<String, ArrayList<ResvPair>> table;
 
-	private Reservations(){
+	public Reservations(){
 		table = new HashMap<String, ArrayList<ResvPair>>();
 	}
 
-	public static Reservations getInstance(){
-		if(instance==null)
-			instance = new Reservations();
-		return instance;
+	public boolean addCustomer(String custName){
+		if(table.containsKey(custName)){
+			return false;
+		}else{
+			table.put(custName, new ArrayList<ResvPair>());
+		}
+		return true;
+	}
+
+	public boolean deleteCustomer(String custName){
+		if(table.containsKey(custName)){
+			table.remove(custName);
+			return true;
+		}else
+			return false;
 	}
 
 	public boolean addReservation(String custName, int resvType, int resvKey){

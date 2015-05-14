@@ -8,23 +8,15 @@ import java.util.Set;
 
 public class Flights{
   //attributes
-  private static Flights instance=null;
   private Map<String, Flight> table;
   //perhaps we will add more attributes to guarantee ACID
 
 
   //constructor
-  private Flights(){
+  public Flights(){
     table= new HashMap<String, Flight>();
   }
 
-  //methods
-
-  public static Flights getInstance(){
-    if(instance==null)
-      instance = new Flights();
-    return instance;
-  }
 
   /**
   * Methods to add, update, remove and search tuples on the table
