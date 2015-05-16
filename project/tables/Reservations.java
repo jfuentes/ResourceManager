@@ -12,6 +12,9 @@ public class Reservations{
 	* and a list of pairs (resvType, resvKey)
 	**/
 	private Map<String, ArrayList<ResvPair>> table;
+	public final static int FLIGHT_TYPE=1;
+	public final static int ROOM_TYPE=2;
+	public final static int CAR_TYPE=3;
 
 	public Reservations(){
 		table = new HashMap<String, ArrayList<ResvPair>>();
@@ -66,8 +69,9 @@ public class Reservations{
 		table.put(custName, array);
 	}
 
+
 	//combine resvType and resvKey as a value pair
-	private class ResvPair{
+	public class ResvPair{
 		private int resvType;
 		private int resvKey;
 
