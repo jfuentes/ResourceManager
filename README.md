@@ -1,2 +1,2 @@
-# P1ResourceManager
+# ResourceManager
 A simple Resource Manager that supports concurrent transactions with ACID properties
