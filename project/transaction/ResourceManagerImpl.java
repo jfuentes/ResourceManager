@@ -181,6 +181,12 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      //check if there is any reservation over this flight
+      //A s-lock for checking reservation is needed?
+      if(reservations.existsReservation(Reservation.FLIGHT_TYPE, flightNum)){
+         return false;
+      }
+      //otherwise the flight can be deleted
 
       //first get a lock a update the table
       try{
@@ -253,7 +259,7 @@ implements ResourceManager {
          activeTransactions.put(xid, operations);
          return true;
       }else
-      return false;
+         return false;
    }
 
    public boolean addCars(int xid, String location, int numCars, int price)
@@ -473,7 +479,7 @@ implements ResourceManager {
          //deal with the deadlock
       }
 
-		ArrayList<ResvPair> reservs = reservations.getReservations(custName);
+		ArrayList<ResvPair> reservs = reservations.getReservations(xid, custName);
 
 		for(ResvPair pair: reservs){
 			switch(pair.getResvType()){
@@ -495,24 +501,62 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
-      flightcounter--;
-      return true;
+
+      if(queryFlight(xid, flightNum)<1){
+         //there is no seat available
+         return false;
+      }
+      //otherwise, we can make the reservation
+      try{
+         if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+      }
+
+      return reservations.addReservation(custName, Reservations.FLIGHT_TYPE, flightNum);
+
    }
 
    public boolean reserveCar(int xid, String custName, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
-      carscounter--;
-      return true;
+      if(queryCars(xid, location)<1){
+         //there is no seat available
+         return false;
+      }
+      //otherwise, we can make the reservation
+      try{
+         if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+      }
+
+      return reservations.addReservation(custName, Reservations.CAR_TYPE, location);
    }
 
    public boolean reserveRoom(int xid, String custName, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
-      roomscounter--;
-      return true;
+      if(queryRooms(xid, location)<1){
+         //there is no seat available
+         return false;
+      }
+      //otherwise, we can make the reservation
+      try{
+         if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+      }
+
+      return reservations.addReservation(custName, Reservations.ROOM_TYPE, flightNum);
    }
 
 

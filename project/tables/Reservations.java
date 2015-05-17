@@ -69,6 +69,17 @@ public class Reservations{
 		table.put(custName, array);
 	}
 
+	public boolean existsReservation(int resvType, int resvKey){
+		for (String key : table.keySet()){
+			ArrayList<ResvPair> reservations = table.get(custName);
+			for (ResvPair pair : reservations){
+				if(resvType==pair.getResvType() && resvKey==pair.getResvKey)
+					return true;
+			}
+		}
+		return false;
+	}
+
 
 	//combine resvType and resvKey as a value pair
 	public class ResvPair{
