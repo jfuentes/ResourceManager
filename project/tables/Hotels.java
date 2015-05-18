@@ -3,8 +3,9 @@ package tables;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.io.Serializable;
 
-public class Hotels{
+public class Hotels implements Serializable{
 	private Map<String, Hotel> table;
 
 	public Hotels(){

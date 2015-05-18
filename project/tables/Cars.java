@@ -3,8 +3,9 @@ package tables;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.io.Serializable;
 
-public class Cars{
+public class Cars implements Serializable{
 	private Map<String, Car> table;
 
 	public Cars(){

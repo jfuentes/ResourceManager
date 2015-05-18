@@ -4,9 +4,9 @@ package tables;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.io.Serializable;
 
-
-public class Flights{
+public class Flights implements Serializable{
   //attributes
   private Map<String, Flight> table;
   //perhaps we will add more attributes to guarantee ACID

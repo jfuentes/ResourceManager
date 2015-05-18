@@ -4,8 +4,9 @@ package tables;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.Serializable;
 
-public class Reservations{
+public class Reservations implements Serializable{
 	/**
 	* This table represents the combination of Customers and their reservations
 	* The table is represented with a Hash Table where the primary key is custName
@@ -37,7 +38,7 @@ public class Reservations{
 			return false;
 	}
 
-	public boolean addReservation(String custName, int resvType, int resvKey){
+	public boolean addReservation(String custName, int resvType, String resvKey){
 		if(table.containsKey(custName)){
 			//We assume that if the customer already exists we add a new reservation
 			ArrayList<ResvPair> resvPairs = table.get(custName);
@@ -51,7 +52,7 @@ public class Reservations{
 		return true;
 	}
 
-	public boolean deleteReservation(String custName, int resvType, int resvKey){
+	public boolean deleteReservation(String custName, int resvType, String resvKey){
 		if(!table.containsKey(custName)){
 			return false;
 		}
@@ -69,11 +70,11 @@ public class Reservations{
 		table.put(custName, array);
 	}
 
-	public boolean existsReservation(int resvType, int resvKey){
+	public boolean existsReservation(int resvType, String resvKey){
 		for (String key : table.keySet()){
-			ArrayList<ResvPair> reservations = table.get(custName);
+			ArrayList<ResvPair> reservations = table.get(key);
 			for (ResvPair pair : reservations){
-				if(resvType==pair.getResvType() && resvKey==pair.getResvKey)
+				if(resvType==pair.getResvType() && resvKey==pair.getResvKey())
 					return true;
 			}
 		}
@@ -81,23 +82,6 @@ public class Reservations{
 	}
 
 
-	//combine resvType and resvKey as a value pair
-	public class ResvPair{
-		private int resvType;
-		private int resvKey;
 
-		public ResvPair(int resvType, int resvKey){
-			this.resvType = resvType;
-			this.resvKey = resvKey;
-		}
-
-		public int getResvType(){
-			return resvType;
-		}
-
-		public int getResvKey(){
-			return resvKey;
-		}
-	}
 
 }
