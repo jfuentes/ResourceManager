@@ -54,14 +54,14 @@ implements ResourceManager {
    public static final String RESERVATION = "reservation";
 
    //paths for db on disk
-   public static final String FLIGHT_DB = "tables/"+FLIGHT+".db";
-   public static final String FLIGHT_ACTIVE_DB = "tables/"+FLIGHT+"_active.db";
-   public static final String CAR_DB = "tables/"+CAR+".db";
-   public static final String CAR_ACTIVE_DB = "tables/"+CAR+"_active.db";
-   public static final String HOTEL_DB = "tables/"+HOTEL+".db";
-   public static final String HOTEL_ACTIVE_DB = "tables/"+HOTEL+"_active.db";
-   public static final String RESERVATION_DB = "tables/"+RESERVATION+".db";
-   public static final String RESERVATION_ACTIVE_DB = "tables/"+RESERVATION+"_active.db";
+   public static final String FLIGHT_DB = "../tables/"+FLIGHT+".db";
+   public static final String FLIGHT_ACTIVE_DB = "../tables/"+FLIGHT+"_active.db";
+   public static final String CAR_DB = "../tables/"+CAR+".db";
+   public static final String CAR_ACTIVE_DB = "../tables/"+CAR+"_active.db";
+   public static final String HOTEL_DB = "../tables/"+HOTEL+".db";
+   public static final String HOTEL_ACTIVE_DB = "../tables/"+HOTEL+"_active.db";
+   public static final String RESERVATION_DB = "../tables/"+RESERVATION+".db";
+   public static final String RESERVATION_ACTIVE_DB = "../tables/"+RESERVATION+"_active.db";
 
    //shutdown flags
    private Boolean bool = true;
@@ -94,7 +94,13 @@ implements ResourceManager {
 
 
    public ResourceManagerImpl() throws RemoteException {
-      recover();  //recover db
+      //recover();  //recover db
+      cars = new Cars();
+      hotels = new Hotels();
+      flights = new Flights();
+      reservations = new Reservations();
+
+
       actCars=new Cars();
       actHotels=new Hotels();
       actFlights= new Flights();
@@ -104,6 +110,8 @@ implements ResourceManager {
       lm = new LockManager();
 
       xidCounter = 0;
+
+      System.out.println("ResourceManager started");
    }
 
    private boolean recover(){
@@ -136,7 +144,7 @@ implements ResourceManager {
 		try{
 			//check if pointer file exists
 			if(!file.exists()){
-            flights = new Flights();
+            cars = new Cars();
 			}else{
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(CAR_DB));
 			   Object obj = in.readObject();
@@ -217,6 +225,7 @@ implements ResourceManager {
 
          activeTransactions.put(xidCounter, new ArrayList<OperationPair>());
 
+         System.out.println("Transaction "+xidCounter+" started");
          return xidCounter;
       }else
          return -1;
@@ -237,28 +246,35 @@ implements ResourceManager {
       for(OperationPair op: operations){
          //go over each operation and merge it on the non-active tables
          switch(op.getTable()){
-            case FLIGHT: if(actFlights.containsFlight(op.getKey())) //if the flight exits, we just update it
-            flights.addFlight(op.getKey(), actFlights.getFlight(op.getKey()));
-            else  //otherwise we need to delete it in non-active db
-            flights.deleteFlight(op.getKey());
+            case FLIGHT:
+            if(actFlights.containsFlight(op.getKey())){ //if the flight exits, we just update it
+               Flight f = actFlights.getFlight(op.getKey());
+               flights.addFlight(op.getKey(), new Flight(f.getFlightNum(), f.getPrice(), f.getNumSeats(), f.getNumAvail()));
+            }else  //otherwise we need to delete it in non-active db
+               flights.deleteFlight(op.getKey());
             updateFlight=true;
             break;
 
-            case CAR:    if(actCars.containsCar(op.getKey()))
-            cars.addCar(op.getKey(), actCars.getCar(op.getKey()));
-            else
-            cars.deleteCar(op.getKey());
-            updateCar=true;
-            break;
+            case CAR:
+               if(actCars.containsCar(op.getKey())){
+                  Car c = actCars.getCar(op.getKey());
+                  cars.addCar(op.getKey(), new Car(c.getLocation(), c.getPrice(), c.getNumCars(), c.getNumAvail()));
+               }else
+                  cars.deleteCar(op.getKey());
+               updateCar=true;
+               break;
 
-            case HOTEL:  if(actHotels.containsHotel(op.getKey()))
-            hotels.addHotel(op.getKey(), actHotels.getHotel(op.getKey()));
-            else
-            hotels.deleteHotel(op.getKey());
-            updateHotel=true;
-            break;
+            case HOTEL:
+               if(actHotels.containsHotel(op.getKey())){
+                  Hotel h = actHotels.getHotel(op.getKey());
+                  hotels.addHotel(op.getKey(), new Hotel(h.getLocation(), h.getPrice(), h.getNumRooms(), h.getNumAvail()));
 
-            case RESERVATION:  reservations.addReservations(op.getKey(), actReservations.getReservations(op.getKey()));
+               }else
+                  hotels.deleteHotel(op.getKey());
+               updateHotel=true;
+               break;
+
+            case RESERVATION:  reservations.addReservations(op.getKey(), actReservations.getCloneReservations(op.getKey()));
             updateReservation=true;
             break;
 
@@ -270,14 +286,14 @@ implements ResourceManager {
       activeTransactions.remove(xid);
 
       //update tables on disk (active and non-active)
-      if(updateFlight)
+   /*   if(updateFlight)
          updateTableOnDisk(FLIGHT);
       if(updateCar)
          updateTableOnDisk(CAR);
       if(updateHotel)
          updateTableOnDisk(HOTEL);
       if(updateReservation)
-         updateTableOnDisk(RESERVATION);
+         updateTableOnDisk(RESERVATION); */
 
       lm.unlockAll(xid); // release the lock
 
@@ -292,6 +308,9 @@ implements ResourceManager {
 
    public void abort(int xid)throws RemoteException, InvalidTransactionException {
       //PENDIENT: not commit, but undo active database?
+
+
+      //undoOperations(xid);
       activeTransactions.remove(xid);
 
       lm.unlockAll(xid); // release the lock
@@ -305,16 +324,68 @@ implements ResourceManager {
       return;
    }
 
+   private boolean undoOperations(int xid)throws RemoteException,
+   InvalidTransactionException {
+      System.out.println("Undo");
+
+      if(!activeTransactions.containsKey(xid))
+         return false;
+
+      //reflect the changes over the non-active database
+      ArrayList<OperationPair> operations = activeTransactions.get(xid);
+
+      for(OperationPair op: operations){
+         //go over each operation and merge it on the non-active tables
+         switch(op.getTable()){
+            case FLIGHT: if(actFlights.containsFlight(op.getKey())) //if the flight exits, we just update it
+            actFlights.addFlight(op.getKey(), flights.getFlight(op.getKey()));
+            else  //otherwise we need to delete it in non-active db
+            actFlights.addFlight(op.getKey(), flights.getFlight(op.getKey()));
+            break;
+
+            case CAR:    if(actCars.containsCar(op.getKey()))
+            actCars.addCar(op.getKey(), cars.getCar(op.getKey()));
+            else
+            actCars.addCar(op.getKey(), cars.getCar(op.getKey()));
+            break;
+
+            case HOTEL:  if(actHotels.containsHotel(op.getKey()))
+            actHotels.addHotel(op.getKey(), hotels.getHotel(op.getKey()));
+            else
+            actHotels.addHotel(op.getKey(), hotels.getHotel(op.getKey()));
+            break;
+
+            case RESERVATION:  actReservations.addReservations(op.getKey(), reservations.getReservations(op.getKey()));
+            break;
+
+            default: throw new InvalidTransactionException(xid, "Problem merging values to non-active db");
+
+         }
+      }
+      return true;
+
+   }
+
    public void updateTableOnDisk(String table){
+      String currentDir = System.getProperty("user.dir");
+      System.out.println("Current dir using System:" +currentDir);
       if(table==FLIGHT){
          try{
                //non-active
- 		         FileOutputStream fout = new FileOutputStream(FLIGHT_DB);
+               File file = new File(FLIGHT_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
+ 		         FileOutputStream fout = new FileOutputStream(file, false);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(flights);
 		         oos.close();
 
                //active
+               file = new File(FLIGHT_ACTIVE_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
                fout = new FileOutputStream(FLIGHT_ACTIVE_DB);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actFlights);
@@ -325,12 +396,20 @@ implements ResourceManager {
       }else if(table==CAR){
          try{
                //non-active
+               File file = new File(CAR_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
  		         FileOutputStream fout = new FileOutputStream(CAR_DB);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(cars);
 		         oos.close();
 
                //active
+               file = new File(CAR_ACTIVE_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
                fout = new FileOutputStream(CAR_ACTIVE_DB);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actCars);
@@ -341,12 +420,20 @@ implements ResourceManager {
       }else if(table==HOTEL){
          try{
                //non-active
+               File file = new File(HOTEL_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
  		         FileOutputStream fout = new FileOutputStream(HOTEL_DB);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(hotels);
 		         oos.close();
 
                //active
+               file = new File(HOTEL_ACTIVE_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
                fout = new FileOutputStream(HOTEL_ACTIVE_DB);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actHotels);
@@ -357,12 +444,20 @@ implements ResourceManager {
       }else if(table==RESERVATION){
          try{
                //non-active
+               File file = new File(RESERVATION_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
  		         FileOutputStream fout = new FileOutputStream(RESERVATION_DB);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(reservations);
 		         oos.close();
 
                //active
+               file = new File(RESERVATION_ACTIVE_DB);
+               if(!file.exists()) {
+                  file.createNewFile();
+               }
                fout = new FileOutputStream(RESERVATION_ACTIVE_DB);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actReservations);
@@ -392,7 +487,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the flight in the table
-      actFlights.addFlight(flightNum, numSeats, price);
+      actFlights.addFlight(flightNum, price, numSeats);
 
 
       //keep tracking of operations
@@ -460,7 +555,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the hotel in the table
-      actHotels.addRooms(location, numRooms, price);
+      actHotels.addRooms(location, price, numRooms);
 
 
       //keep tracking of operations
@@ -517,7 +612,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the Car in the table
-      actCars.addCars(location, numCars, price);
+      actCars.addCars(location, price, numCars );
 
       //keep tracking of operations
       ArrayList<OperationPair> operations = activeTransactions.get(xid);

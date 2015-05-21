@@ -68,3 +68,241 @@ Query of flight/rooms/cars/customer does not return correct result after an abor
 
 ============================================
 Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result after an abort.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Stoomanyrsv)	-3
+Allows reservation of more than available items.
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Saddcmtdelrsv)	-3
+Allows reservation of items deleted earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 24/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Stoomanyrsv)	-3
+Allows reservation of more than available items.
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Saddcmtdelrsv)	-3
+Allows reservation of items deleted earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 24/100

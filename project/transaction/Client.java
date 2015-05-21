@@ -83,7 +83,7 @@ public class Client {
     	    System.err.println("Cannot launch " + toLaunch + ": " + e);
     	    cleanUpExit(2);
     	}
-    	System.out.println(toLaunch + " launched");
+    	System.out.println(toLaunch + " launched with "+rmiPort);
 
     	try {
     	    Thread.sleep(LAUNCHSLEEP);

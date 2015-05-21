@@ -66,6 +66,16 @@ public class Reservations implements Serializable{
 		return table.get(custName);
 	}
 
+	public ArrayList<ResvPair> getCloneReservations(String custName){
+		ArrayList<ResvPair> res = new ArrayList<ResvPair>();
+		ArrayList<ResvPair> reservations = table.get(custName);
+		for (ResvPair pair : reservations){
+			res.add(new ResvPair(pair.getResvType(), pair.getResvKey()));
+		}
+
+		return res;
+	}
+
 	public void addReservations(String custName, ArrayList<ResvPair> array){
 		table.put(custName, array);
 	}
@@ -81,7 +91,18 @@ public class Reservations implements Serializable{
 		return false;
 	}
 
+	public Reservations clone(){
+		Reservations res = new Reservations();
 
+		for (String key : table.keySet()){
+			ArrayList<ResvPair> reservations = table.get(key);
+			for (ResvPair pair : reservations){
+				res.addReservation(key, pair.getResvType(), pair.getResvKey());
+			}
+		}
+
+		return res;
+	}
 
 
 }

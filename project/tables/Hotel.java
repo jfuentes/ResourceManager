@@ -50,4 +50,8 @@ public class Hotel{
 	public String toString(){
 		return location+"  "+price+"  "+numRooms+"  "+numAvail;
 	}
+
+	public Hotel clone(){
+		return new Hotel(location, price, numRooms, numAvail);
+	}
 }

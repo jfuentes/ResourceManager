@@ -55,4 +55,8 @@ public class Flight{
     return flightNum+"  "+price+"  "+numSeats+"  "+numAvail;
   }
 
+  public Flight clone(){
+     return new Flight(flightNum, price,  numSeats, numAvail);
+ }
+
 }

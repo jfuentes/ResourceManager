@@ -26,8 +26,8 @@ public class Flights implements Serializable{
     if(table.containsKey(flightNum)){
       //the flight already exists, update
       Flight flight = table.get(flightNum);
-			flight.setPrice(price); //update to the new price
-			flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new seats
+		flight.setPrice(price); //update to the new price
+		flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new seats
       flight.setNumAvail(numSeats+flight.getNumAvail()); //add the new seats
 			table.put(flightNum, flight);
     }else

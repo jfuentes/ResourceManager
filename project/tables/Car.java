@@ -50,4 +50,8 @@ public class Car{
 	public String toString(){
     return location+"  "+price+"  "+numCars+"  "+numAvail;
    }
+
+	public Car clone(){
+		return new Car(location, price, numCars, numAvail);
+	}
 }
