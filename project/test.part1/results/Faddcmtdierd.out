@@ -41,5 +41,5 @@ Bound to RM
 [1] 	LINE--1 return
 [1] 	LINE--1 call queryFlight xid "347"
 [1] Calling queryFlight
-[1] queryFlight exceptioned: java.lang.NullPointerException
+[1] queryFlight returned: -1
 [1] 	LINE--1 return 100

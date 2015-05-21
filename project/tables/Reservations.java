@@ -91,6 +91,10 @@ public class Reservations implements Serializable{
 		return false;
 	}
 
+	public boolean containsCustomer(String custName){
+		return table.containsKey(custName);
+	}
+
 	public Reservations clone(){
 		Reservations res = new Reservations();
 

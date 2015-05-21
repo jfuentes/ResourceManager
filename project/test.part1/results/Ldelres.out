@@ -49,9 +49,11 @@ Bound to RM
 [2] 	LINE--2 return
 [1] 	LINE--1 call deleteFlight xid "347"
 [1] Calling deleteFlight
-[1] deleteFlight returned: true
+[1] deleteFlight returned: false
 [1] 	LINE--1 return false
 [2] 	LINE--2 call reserveRoom xid "John" "Stanford"
 [2] Calling reserveRoom
-[2] reserveRoom exceptioned: java.rmi.UnmarshalException
+[2] reserveRoom returned: true
 [2] 	LINE--2 return true
+[2] 	LINE--2 exit
+[2] Test exiting.

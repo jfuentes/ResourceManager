@@ -1,9 +1,9 @@
 RM launched with 2101
 Bound to RM
 [M] Launching 2 threads.
+[2] Thread running.
 [1] Thread running.
 [1] 	LINE--1 call start
-[2] Thread running.
 [1] Calling start
 [1] start returned: 1
 [1] xid set to 1
@@ -22,8 +22,8 @@ Bound to RM
 [1] 	LINE--1 call commit xid
 [1] Calling commit
 [1] commit returned: true
-[1] 	LINE--1 return true
 [2] queryRoomsPrice returned: 150
+[1] 	LINE--1 return true
 [2] 	LINE--2 return 150
 [2] 	LINE--2 exit
 [2] Test exiting.

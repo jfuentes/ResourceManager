@@ -15,8 +15,15 @@ Bound to RM
 [2] 	LINE--2 return
 [1] 	LINE--1 call queryCars xid "SFO"
 [1] Calling queryCars
-[1] queryCars exceptioned: java.lang.NullPointerException
+[1] queryCars returned: -1
 [1] 	LINE--1 return
 [2] 	LINE--2 call addCars xid "SFO" 300 30
 [2] Calling addCars
-[2] addCars exceptioned: java.rmi.UnmarshalException
+[1] 	LINE--1 call commit xid
+[1] Calling commit
+[1] commit returned: true
+[1] 	LINE--1 return true
+[2] addCars returned: true
+[2] 	LINE--2 return true
+[2] 	LINE--2 exit
+[2] Test exiting.

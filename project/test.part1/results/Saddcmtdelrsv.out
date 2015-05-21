@@ -46,5 +46,15 @@ Bound to RM
 [1] 	LINE--1 return true
 [1] 	LINE--1 call reserveFlight xid "John" "347"
 [1] Calling reserveFlight
-[1] reserveFlight returned: true
+[1] reserveFlight returned: false
 [1] 	LINE--1 return false
+[1] 	LINE--1 call reserveRoom xid "John" "Stanford"
+[1] Calling reserveRoom
+[1] reserveRoom returned: false
+[1] 	LINE--1 return false
+[1] 	LINE--1 call reserveCar xid "John" "SFO"
+[1] Calling reserveCar
+[1] reserveCar returned: false
+[1] 	LINE--1 return false
+[1] 	LINE--1 exit
+[1] Test exiting.

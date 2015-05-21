@@ -21,7 +21,8 @@ public class Cars implements Serializable{
 		if(table.containsKey(location)){
 			//the car already exists, we update
 			Car car = table.get(location);
-			car.setPrice(price); //update to the new price
+			if(price>=0)
+				car.setPrice(price); //update to the new price
 			car.setNumCars(numCars+car.getNumCars()); //add the new cars
 			table.put(location, car);
 		}else
@@ -55,7 +56,20 @@ public class Cars implements Serializable{
 
 	public boolean containsCar(String location){
     return table.containsKey(location);
-  }
+   }
+
+	public boolean reserveCar(String location, int numCars){
+		if(table.containsKey(location)){
+			Car car = table.get(location);
+      	if(car.getNumAvail()-numCars>=0){
+         	car.setNumAvail(car.getNumAvail()-numCars); //add the new seats
+         	table.put(location, car);
+         	return true;
+      	}else
+      		return false;
+     }else
+         return false;
+	}
 
 	public String toString(){
 		String s="";

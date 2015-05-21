@@ -306,3 +306,532 @@ After dieAfterPointerSwitch is set, server does not die during commit.
 
 ============================================
 Your final score is 24/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Stoomanyrsv)	-3
+Allows reservation of more than available items.
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sbill)	-3
+Does not compute correct bill.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Saddcmtdelrsv)	-3
+Allows reservation of items deleted earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Lbillprc)	-5
+queryCustomerBill does not read-lock prices.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 11/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sbill)	-3
+Does not compute correct bill.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Lbillprc)	-5
+queryCustomerBill does not read-lock prices.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 17/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sbill)	-3
+Does not compute correct bill.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Lbillprc)	-5
+queryCustomerBill does not read-lock prices.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 17/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sbill)	-3
+Does not compute correct bill.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Lbillprc)	-5
+queryCustomerBill does not read-lock prices.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 17/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sbill)	-3
+Does not compute correct bill.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Lbillprc)	-5
+queryCustomerBill does not read-lock prices.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 17/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sdelreserved)	-3
+Allows delete of flight with reservations.
+
+(Sbill)	-3
+Does not compute correct bill.
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Ldelres)	-5
+delete locks customer's reservations.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Lbillprc)	-5
+queryCustomerBill does not read-lock prices.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 17/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sprsvprc)	-3
+Price is not preserved when adding with price less than 0.
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 38/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Saddrd)	-3
+Cannot query items added earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 41/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Saddcmtdelrsv)	-3
+Allows reservation of items deleted earlier in same transaction.
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 41/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 44/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sshutdown)	-0
+shutdown does not immediately exit.
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 47/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Lnonexi)	-5
+query does not acquire lock on non-existent items.
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 47/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 52/100

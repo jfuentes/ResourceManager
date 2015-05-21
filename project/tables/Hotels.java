@@ -20,7 +20,8 @@ public class Hotels implements Serializable{
 	public boolean addRooms(String location, int price, int numRooms){
 		if(table.containsKey(location)){
 			Hotel hotel = table.get(location);
-			hotel.setPrice(price); //update to the new price
+			if(price>=0)
+				hotel.setPrice(price); //update to the new price
 			hotel.setNumRooms(numRooms+hotel.getNumRooms()); //add the new cars
 			table.put(location, hotel);
 		}else
@@ -58,6 +59,19 @@ public class Hotels implements Serializable{
 		hotel.setNumAvail(hotel.getNumAvail()-numRooms); //add the new rooms
 		table.put(location, hotel);
 		return true;
+	}
+
+	public boolean reserveRoom(String location, int numRooms){
+		if(table.containsKey(location)){
+			Hotel hotel = table.get(location);
+			if(hotel.getNumAvail()-numRooms>=0){
+				hotel.setNumAvail(hotel.getNumAvail()-numRooms); //add the new seats
+				table.put(location, hotel);
+				return true;
+			}else
+				return false;
+	}else
+			return false;
 	}
 
 	public String toString(){

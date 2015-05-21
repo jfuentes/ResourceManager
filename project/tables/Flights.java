@@ -26,7 +26,8 @@ public class Flights implements Serializable{
     if(table.containsKey(flightNum)){
       //the flight already exists, update
       Flight flight = table.get(flightNum);
-		flight.setPrice(price); //update to the new price
+		if(price>=0)
+         flight.setPrice(price); //update to the new price
 		flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new seats
       flight.setNumAvail(numSeats+flight.getNumAvail()); //add the new seats
 			table.put(flightNum, flight);
@@ -34,6 +35,20 @@ public class Flights implements Serializable{
       table.put(flightNum, new Flight(flightNum, price, numSeats, numSeats));
     return true;
   }
+
+  public boolean reserveSeat(String flightNum, int numSeats){
+     if(table.containsKey(flightNum)){
+      //the flight already exists, update
+      Flight flight = table.get(flightNum);
+      if(flight.getNumAvail()-numSeats>=0){
+         flight.setNumAvail(flight.getNumAvail()-numSeats); //add the new seats
+         table.put(flightNum, flight);
+         return true;
+      }else
+      return false;
+     }else
+         return false;
+ }
 
   public void addFlight(String flightNum, Flight flight){
     table.put(flightNum, flight);

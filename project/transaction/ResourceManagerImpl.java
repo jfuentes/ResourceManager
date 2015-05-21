@@ -232,8 +232,14 @@ implements ResourceManager {
 
    }
 
+   public void checkTransactionID(int xid) throws InvalidTransactionException{
+      if(!activeTransactions.containsKey(xid))
+         throw new InvalidTransactionException(xid, "xid transaction invalid");
+   }
+
    public boolean commit(int xid) throws RemoteException, TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       System.out.println("Committing");
       boolean updateFlight=false, updateCar=false, updateHotel=false, updateReservation=false;
 
@@ -303,14 +309,19 @@ implements ResourceManager {
 
          }
       }
+
+      //System.out.println(toStringNonActiveDB(FLIGHT));
+      //System.out.println(toStringNonActiveDB(CAR));
+      //System.out.println(toStringNonActiveDB(HOTEL));
+      //System.out.println(toStringNonActiveDB(RESERVATION));
       return true;
    }
 
    public void abort(int xid)throws RemoteException, InvalidTransactionException {
       //PENDIENT: not commit, but undo active database?
+      checkTransactionID(xid);
 
-
-      //undoOperations(xid);
+      undoOperations(xid);
       activeTransactions.remove(xid);
 
       lm.unlockAll(xid); // release the lock
@@ -326,6 +337,7 @@ implements ResourceManager {
 
    private boolean undoOperations(int xid)throws RemoteException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       System.out.println("Undo");
 
       if(!activeTransactions.containsKey(xid))
@@ -337,25 +349,32 @@ implements ResourceManager {
       for(OperationPair op: operations){
          //go over each operation and merge it on the non-active tables
          switch(op.getTable()){
-            case FLIGHT: if(actFlights.containsFlight(op.getKey())) //if the flight exits, we just update it
-            actFlights.addFlight(op.getKey(), flights.getFlight(op.getKey()));
-            else  //otherwise we need to delete it in non-active db
-            actFlights.addFlight(op.getKey(), flights.getFlight(op.getKey()));
+            case FLIGHT:
+            if(flights.containsFlight(op.getKey())){ //if the flight exits, we just update it
+               Flight f = flights.getFlight(op.getKey());
+               actFlights.addFlight(op.getKey(), new Flight(f.getFlightNum(), f.getPrice(), f.getNumSeats(), f.getNumAvail()));
+            }else  //otherwise we need to delete it in non-active db
+               actFlights.deleteFlight(op.getKey());
             break;
 
-            case CAR:    if(actCars.containsCar(op.getKey()))
-            actCars.addCar(op.getKey(), cars.getCar(op.getKey()));
-            else
-            actCars.addCar(op.getKey(), cars.getCar(op.getKey()));
-            break;
+            case CAR:
+               if(cars.containsCar(op.getKey())){
+                  Car c = cars.getCar(op.getKey());
+                  actCars.addCar(op.getKey(), new Car(c.getLocation(), c.getPrice(), c.getNumCars(), c.getNumAvail()));
+               }else
+                  actCars.deleteCar(op.getKey());
+               break;
 
-            case HOTEL:  if(actHotels.containsHotel(op.getKey()))
-            actHotels.addHotel(op.getKey(), hotels.getHotel(op.getKey()));
-            else
-            actHotels.addHotel(op.getKey(), hotels.getHotel(op.getKey()));
-            break;
+            case HOTEL:
+               if(hotels.containsHotel(op.getKey())){
+                  Hotel h = hotels.getHotel(op.getKey());
+                  actHotels.addHotel(op.getKey(), new Hotel(h.getLocation(), h.getPrice(), h.getNumRooms(), h.getNumAvail()));
 
-            case RESERVATION:  actReservations.addReservations(op.getKey(), reservations.getReservations(op.getKey()));
+               }else
+                  actHotels.deleteHotel(op.getKey());
+               break;
+
+            case RESERVATION:  actReservations.addReservations(op.getKey(), actReservations.getCloneReservations(op.getKey()));
             break;
 
             default: throw new InvalidTransactionException(xid, "Problem merging values to non-active db");
@@ -366,7 +385,7 @@ implements ResourceManager {
 
    }
 
-   public void updateTableOnDisk(String table){
+   private void updateTableOnDisk(String table){
       String currentDir = System.getProperty("user.dir");
       System.out.println("Current dir using System:" +currentDir);
       if(table==FLIGHT){
@@ -472,7 +491,7 @@ implements ResourceManager {
    // ADMINISTRATIVE INTERFACE
    public boolean addFlight(int xid, String flightNum, int numSeats, int price)
    throws RemoteException, TransactionAbortedException, InvalidTransactionException {
-
+      checkTransactionID(xid);
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
@@ -504,9 +523,11 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
+
       //check if there is any reservation over this flight
       //A s-lock for checking reservation is needed?
-      if(reservations.existsReservation(Reservations.FLIGHT_TYPE, flightNum)){
+      if(queryFlightHasReservation(xid, flightNum)){
          return false;
       }
       //otherwise the flight can be deleted
@@ -541,6 +562,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
@@ -571,6 +594,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
@@ -598,6 +622,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
@@ -626,6 +651,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
@@ -653,6 +679,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
@@ -681,6 +708,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
@@ -710,7 +738,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
-
+      checkTransactionID(xid);
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.READ)){
             return -1;
@@ -723,14 +751,17 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-
-      return flights.getFlight(flightNum).getNumAvail();
+      if(!actFlights.containsFlight(flightNum))
+         return -1;
+      else
+         return actFlights.getFlight(flightNum).getNumAvail();
    }
 
    public int queryFlightPrice(int xid, String flightNum)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.READ)){
             return -1;
@@ -743,14 +774,40 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
+      if(!actFlights.containsFlight(flightNum))
+         return -1;
+      else
+         return actFlights.getFlight(flightNum).getPrice();
+   }
 
-      return flights.getFlight(flightNum).getPrice();
+   public boolean queryFlightHasReservation(int xid, String flightNum)
+   throws RemoteException,
+   TransactionAbortedException,
+   InvalidTransactionException {
+      checkTransactionID(xid);
+      try{
+         if(!lm.lock(xid, FLIGHT + flightNum, LockManager.READ)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+         //abort the transaction
+         abort(xid);
+         return false;
+      }
+
+      //transaction got the S-lock
+      if(!actFlights.containsFlight(flightNum))
+         return false;
+      else
+         return actFlights.getFlight(flightNum).getNumSeats()>actFlights.getFlight(flightNum).getNumAvail();
    }
 
    public int queryRooms(int xid, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
             return -1;
@@ -763,14 +820,17 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-
-      return hotels.getHotel(location).getNumAvail();
+      if(!actHotels.containsHotel(location))
+         return -1;
+      else
+         return actHotels.getHotel(location).getNumAvail();
    }
 
    public int queryRoomsPrice(int xid, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
             return -1;
@@ -784,13 +844,41 @@ implements ResourceManager {
 
       //transaction got the S-lock
 
-      return hotels.getHotel(location).getPrice();
+      if(!actHotels.containsHotel(location))
+         return -1;
+      else
+         return actHotels.getHotel(location).getPrice();
+   }
+
+   public boolean queryHotelHasReserve(int xid, String location)
+   throws RemoteException,
+   TransactionAbortedException,
+   InvalidTransactionException {
+      checkTransactionID(xid);
+      try{
+         if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+         //abort the transaction
+         abort(xid);
+         return false;
+      }
+
+      //transaction got the S-lock
+
+      if(!actHotels.containsHotel(location))
+         return false;
+      else
+         return actHotels.getHotel(location).getNumRooms()>actHotels.getHotel(location).getNumAvail();
    }
 
    public int queryCars(int xid, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       try{
          if(!lm.lock(xid, CAR + location, LockManager.READ)){
             return -1;
@@ -803,14 +891,17 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-
-      return cars.getCar(location).getNumAvail();
+      if(!actCars.containsCar(location))
+         return -1;
+      else
+         return actCars.getCar(location).getNumAvail();
    }
 
    public int queryCarsPrice(int xid, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       try{
          if(!lm.lock(xid, CAR + location, LockManager.READ)){
             return -1;
@@ -824,13 +915,41 @@ implements ResourceManager {
 
       //transaction got the S-lock
 
-      return cars.getCar(location).getPrice();
+      if(!actCars.containsCar(location))
+         return -1;
+      else
+         return actCars.getCar(location).getPrice();
+   }
+
+   public boolean queryCarHasReserve(int xid, String location)
+   throws RemoteException,
+   TransactionAbortedException,
+   InvalidTransactionException {
+      checkTransactionID(xid);
+      try{
+         if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+         //abort the transaction
+         abort(xid);
+         return false;
+      }
+
+      //transaction got the S-lock
+
+      if(!actCars.containsCar(location))
+         return false;
+      else
+         return actCars.getCar(location).getNumCars()>actCars.getCar(location).getNumAvail();
    }
 
    public int queryCustomerBill(int xid, String custName)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
       int bill=0;
 
       try{
@@ -844,7 +963,10 @@ implements ResourceManager {
          return -1;
       }
 
-		ArrayList<ResvPair> reservs = reservations.getReservations(custName);
+      if(!actReservations.containsCustomer(custName))
+         return -1;
+
+		ArrayList<ResvPair> reservs = actReservations.getReservations(custName);
 
 		for(ResvPair pair: reservs){
 			switch(pair.getResvType()){
@@ -866,6 +988,10 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
+
+      if(!actFlights.containsFlight(flightNum)) // the flight was recently removed?
+         return false;
 
       if(queryFlight(xid, flightNum)<1){
          //there is no seat available
@@ -883,7 +1009,29 @@ implements ResourceManager {
          return false;
       }
 
-      return reservations.addReservation(custName, Reservations.FLIGHT_TYPE, flightNum);
+      try{ //get the lock to reserve the seat
+         if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+         //abort the transaction
+         abort(xid);
+         return false;
+      }
+
+      if(actFlights.reserveSeat(flightNum, 1)){
+         if(actReservations.addReservation(custName, Reservations.FLIGHT_TYPE, flightNum)){
+            //keep tracking of operations
+            ArrayList<OperationPair> operations = activeTransactions.get(xid);
+            operations.add(new OperationPair(FLIGHT, flightNum));
+            operations.add(new OperationPair(RESERVATION, custName));
+            activeTransactions.put(xid, operations);
+
+            return true;
+         }
+      }
+      return false;
 
    }
 
@@ -891,6 +1039,10 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
+      if(!actCars.containsCar(location)) // the flight was recently removed?
+         return false;
+
       if(queryCars(xid, location)<1){
          //there is no seat available
          return false;
@@ -907,13 +1059,44 @@ implements ResourceManager {
          return false;
       }
 
-      return reservations.addReservation(custName, Reservations.CAR_TYPE, location);
+
+      try{ //get the lock to reserve the car
+         if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+         //abort the transaction
+         abort(xid);
+         return false;
+      }
+
+      if(actCars.reserveCar(location, 1)){
+         if(actReservations.addReservation(custName, Reservations.CAR_TYPE, location)){
+            //keep tracking of operations
+            ArrayList<OperationPair> operations = activeTransactions.get(xid);
+            operations.add(new OperationPair(CAR, location));
+            operations.add(new OperationPair(RESERVATION, custName));
+            activeTransactions.put(xid, operations);
+            return true;
+         }
+      }
+
+
+
+
+      return false;
+
    }
 
    public boolean reserveRoom(int xid, String custName, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      checkTransactionID(xid);
+      if(!actHotels.containsHotel(location)) // the flight was recently removed?
+         return false;
+
       if(queryRooms(xid, location)<1){
          //there is no seat available
          return false;
@@ -930,7 +1113,28 @@ implements ResourceManager {
          return false;
       }
 
-      return reservations.addReservation(custName, Reservations.ROOM_TYPE, location);
+      try{ //get the lock to reserve the room
+         if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
+            return false;
+         }
+      }catch(DeadlockException e){
+         //deal with the deadlock
+         //abort the transaction
+         abort(xid);
+         return false;
+      }
+
+      if(actHotels.reserveRoom(location, 1)){
+         if(actReservations.addReservation(custName, Reservations.ROOM_TYPE, location)){
+            //keep tracking of operations
+            ArrayList<OperationPair> operations = activeTransactions.get(xid);
+            operations.add(new OperationPair(HOTEL, location));
+            operations.add(new OperationPair(RESERVATION, custName));
+            activeTransactions.put(xid, operations);
+            return true;
+         }
+      }
+      return false;
    }
 
 
@@ -939,8 +1143,8 @@ implements ResourceManager {
    throws RemoteException {
       //wait for all active transactions end.
       //do not allow more transactions
-      shutdownflag=true;
-      waitForShutDown();
+      //shutdownflag=true;
+      //waitForShutDown();
       System.exit(0);
       return true;
    }
