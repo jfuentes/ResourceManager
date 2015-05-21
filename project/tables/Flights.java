@@ -22,7 +22,7 @@ public class Flights implements Serializable{
   * Methods to add, update, remove and search tuples on the table
   **/
 
-  public boolean addFlight(String flightNum, int price, int numSeats){
+  public boolean addFlight(String flightNum, int price, int numSeats, int xid){
     if(table.containsKey(flightNum)){
       //the flight already exists, update
       Flight flight = table.get(flightNum);
@@ -30,9 +30,10 @@ public class Flights implements Serializable{
          flight.setPrice(price); //update to the new price
 		flight.setNumSeats(numSeats+flight.getNumSeats()); //add the new seats
       flight.setNumAvail(numSeats+flight.getNumAvail()); //add the new seats
+      flight.setLastTransactionUpdate(xid);
 			table.put(flightNum, flight);
     }else
-      table.put(flightNum, new Flight(flightNum, price, numSeats, numSeats));
+      table.put(flightNum, new Flight(flightNum, price, numSeats, numSeats, xid));
     return true;
   }
 
@@ -69,6 +70,23 @@ public class Flights implements Serializable{
 
   public boolean containsFlight(String flightNum){
     return table.containsKey(flightNum);
+  }
+
+  public boolean isSameTransaction(String flightNum, int xid){
+     if(containsFlight(flightNum))
+         return table.get(flightNum).getLastTransactionUpdate()==xid;
+     else return false;
+ }
+
+  public boolean cancelReservation(String flightNum){
+     if(table.containsKey(flightNum)){
+      //the flight already exists, update
+      Flight flight = table.get(flightNum);
+      flight.setNumAvail(1+flight.getNumAvail());
+      table.put(flightNum, flight);
+      return true;
+     }else
+      return false;
   }
 
   public String toString(){

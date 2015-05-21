@@ -8,11 +8,22 @@ public class Car{
 	private int numCars;
 	private int numAvail;
 
+	private int lastTransactionUpdate; //-1 if it was commited
+
 	public Car(String location, int price, int numCars, int numAvail){
 		this.location = location;
 		this.price = price;
 		this.numCars = numCars;
 		this.numAvail = numAvail;
+		lastTransactionUpdate=-1;
+	}
+
+	public Car(String location, int price, int numCars, int numAvail, int xid){
+		this.location = location;
+		this.price = price;
+		this.numCars = numCars;
+		this.numAvail = numAvail;
+		lastTransactionUpdate=xid;
 	}
 
 	public String getLocation(){
@@ -45,6 +56,14 @@ public class Car{
 
 	public void setNumAvail(int numAvail){
 		this.numAvail = numAvail;
+	}
+
+	public void setLastTransactionUpdate(int t){
+	lastTransactionUpdate=t;
+	}
+
+	public int getLastTransactionUpdate(){
+		return lastTransactionUpdate;
 	}
 
 	public String toString(){

@@ -2331,3 +2331,901 @@ ResourceManager started
 RM bound
 Transaction 1 started
 Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Undo
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Committing
+Transaction 4 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Committing
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, someone has READ or WRITE
+Committing
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Undo
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Undo
+Transaction 4 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Committing
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Undo
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Committing
+Transaction 4 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Committing
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, someone has READ or WRITE
+Committing
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Undo
+Transaction 4 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Committing
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Undo
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Undo
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Committing
+Transaction 4 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Committing
+Committing
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Transaction 2 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want READ, someone has WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, someone has READ or WRITE
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Transaction 3 started
+Transaction 4 started
+Want WRITE, someone has READ or WRITE
+Committing
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want READ, someone has WRITE
+Undo
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Want WRITE, have READ, requesting lock upgrade
+Converting lock...done
+Committing
+Undo
+Transaction 4 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+Transaction 2 started
+Transaction 3 started
+Committing
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing
+ResourceManager started
+RM bound
+Transaction 1 started
+ResourceManager started
+RM bound
+Transaction 1 started
+Committing

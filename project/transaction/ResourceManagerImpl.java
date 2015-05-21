@@ -255,7 +255,9 @@ implements ResourceManager {
             case FLIGHT:
             if(actFlights.containsFlight(op.getKey())){ //if the flight exits, we just update it
                Flight f = actFlights.getFlight(op.getKey());
-               flights.addFlight(op.getKey(), new Flight(f.getFlightNum(), f.getPrice(), f.getNumSeats(), f.getNumAvail()));
+               flights.addFlight(op.getKey(), new Flight(f.getFlightNum(), f.getPrice(), f.getNumSeats(), f.getNumAvail(), -1));
+               f.setLastTransactionUpdate(-1);
+               actFlights.addFlight(op.getKey(), f);
             }else  //otherwise we need to delete it in non-active db
                flights.deleteFlight(op.getKey());
             updateFlight=true;
@@ -264,7 +266,9 @@ implements ResourceManager {
             case CAR:
                if(actCars.containsCar(op.getKey())){
                   Car c = actCars.getCar(op.getKey());
-                  cars.addCar(op.getKey(), new Car(c.getLocation(), c.getPrice(), c.getNumCars(), c.getNumAvail()));
+                  cars.addCar(op.getKey(), new Car(c.getLocation(), c.getPrice(), c.getNumCars(), c.getNumAvail(), -1));
+                  c.setLastTransactionUpdate(-1);
+                  actCars.addCar(op.getKey(), c);
                }else
                   cars.deleteCar(op.getKey());
                updateCar=true;
@@ -273,16 +277,21 @@ implements ResourceManager {
             case HOTEL:
                if(actHotels.containsHotel(op.getKey())){
                   Hotel h = actHotels.getHotel(op.getKey());
-                  hotels.addHotel(op.getKey(), new Hotel(h.getLocation(), h.getPrice(), h.getNumRooms(), h.getNumAvail()));
-
+                  hotels.addHotel(op.getKey(), new Hotel(h.getLocation(), h.getPrice(), h.getNumRooms(), h.getNumAvail(), -1));
+                  h.setLastTransactionUpdate(-1);
+                  actHotels.addHotel(op.getKey(), h);
                }else
                   hotels.deleteHotel(op.getKey());
                updateHotel=true;
                break;
 
-            case RESERVATION:  reservations.addReservations(op.getKey(), actReservations.getCloneReservations(op.getKey()));
-            updateReservation=true;
-            break;
+            case RESERVATION:
+               if(actReservations.containsCustomer(op.getKey())){
+                  reservations.addReservations(op.getKey(), actReservations.getCloneReservations(op.getKey()));
+               }else
+                  reservations.deleteCustomer(op.getKey());
+               updateReservation=true;
+               break;
 
             default: throw new InvalidTransactionException(xid, "Problem merging values to non-active db");
 
@@ -506,7 +515,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the flight in the table
-      actFlights.addFlight(flightNum, price, numSeats);
+      actFlights.addFlight(flightNum, price, numSeats, xid);
 
 
       //keep tracking of operations
@@ -578,7 +587,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the hotel in the table
-      actHotels.addRooms(location, price, numRooms);
+      actHotels.addRooms(location, price, numRooms, xid);
 
 
       //keep tracking of operations
@@ -637,7 +646,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the Car in the table
-      actCars.addCars(location, price, numCars );
+      actCars.addCars(location, price, numCars, xid);
 
       //keep tracking of operations
       ArrayList<OperationPair> operations = activeTransactions.get(xid);
@@ -721,10 +730,63 @@ implements ResourceManager {
          return false;
       }
       //the transaction got the X-lock
+
+      ArrayList<OperationPair> operations = activeTransactions.get(xid);
+
+      //all the reservations must be cancel
+      ArrayList<ResvPair> res=actReservations.getReservations(custName);
+
+      for(ResvPair pair: res){
+         if(pair.getResvType()==Reservations.FLIGHT_TYPE){
+            try{
+               if(!lm.lock(xid, FLIGHT + pair.getResvKey(), LockManager.WRITE)){
+                  return false;
+               }
+            }catch(DeadlockException e){
+               //deal with the deadlock
+               //abort the transaction
+               abort(xid);
+               return false;
+            }
+
+            actFlights.cancelReservation(pair.getResvKey());
+            operations.add(new OperationPair(FLIGHT, pair.getResvKey()));
+         }else if(pair.getResvType()==Reservations.ROOM_TYPE){
+            try{
+               if(!lm.lock(xid, HOTEL + pair.getResvKey(), LockManager.WRITE)){
+                  return false;
+               }
+            }catch(DeadlockException e){
+               //deal with the deadlock
+               //abort the transaction
+               abort(xid);
+               return false;
+            }
+
+            actHotels.cancelReservation(pair.getResvKey());
+            operations.add(new OperationPair(HOTEL, pair.getResvKey()));
+         }else if(pair.getResvType()==Reservations.CAR_TYPE){
+            try{
+               if(!lm.lock(xid, CAR + pair.getResvKey(), LockManager.WRITE)){
+                  return false;
+               }
+            }catch(DeadlockException e){
+               //deal with the deadlock
+               //abort the transaction
+               abort(xid);
+               return false;
+            }
+
+            actCars.cancelReservation(pair.getResvKey());
+            operations.add(new OperationPair(CAR, pair.getResvKey()));
+         }
+
+
+      }
+
       //add/uptade the reservation in the table
       if(actReservations.deleteCustomer(custName)){
          //keep tracking of operations
-         ArrayList<OperationPair> operations = activeTransactions.get(xid);
          operations.add(new OperationPair(RESERVATION, custName));
          activeTransactions.put(xid, operations);
          return true;
@@ -751,10 +813,15 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-      if(!actFlights.containsFlight(flightNum))
+      if(actFlights.containsFlight(flightNum)){
+         if(actFlights.isSameTransaction(flightNum, xid)){
+            return actFlights.getFlight(flightNum).getNumAvail();
+         }else{
+            return flights.getFlight(flightNum).getNumAvail();
+         }
+      }else
          return -1;
-      else
-         return actFlights.getFlight(flightNum).getNumAvail();
+
    }
 
    public int queryFlightPrice(int xid, String flightNum)
@@ -774,10 +841,14 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-      if(!actFlights.containsFlight(flightNum))
+      if(actFlights.containsFlight(flightNum)){
+         if(actFlights.isSameTransaction(flightNum, xid)){
+            return actFlights.getFlight(flightNum).getPrice();
+         }else{
+            return flights.getFlight(flightNum).getPrice();
+         }
+      }else
          return -1;
-      else
-         return actFlights.getFlight(flightNum).getPrice();
    }
 
    public boolean queryFlightHasReservation(int xid, String flightNum)
@@ -820,10 +891,14 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-      if(!actHotels.containsHotel(location))
+      if(actHotels.containsHotel(location)){
+         if(actHotels.isSameTransaction(location, xid)){
+            return actHotels.getHotel(location).getNumAvail();
+         }else{
+            return hotels.getHotel(location).getNumAvail();
+         }
+      }else
          return -1;
-      else
-         return actHotels.getHotel(location).getNumAvail();
    }
 
    public int queryRoomsPrice(int xid, String location)
@@ -844,10 +919,14 @@ implements ResourceManager {
 
       //transaction got the S-lock
 
-      if(!actHotels.containsHotel(location))
+      if(actHotels.containsHotel(location)){
+         if(actHotels.isSameTransaction(location, xid)){
+            return actHotels.getHotel(location).getPrice();
+         }else{
+            return hotels.getHotel(location).getPrice();
+         }
+      }else
          return -1;
-      else
-         return actHotels.getHotel(location).getPrice();
    }
 
    public boolean queryHotelHasReserve(int xid, String location)
@@ -891,10 +970,14 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-      if(!actCars.containsCar(location))
+      if(actCars.containsCar(location)){
+         if(actCars.isSameTransaction(location, xid)){
+            return actCars.getCar(location).getNumAvail();
+         }else{
+            return cars.getCar(location).getNumAvail();
+         }
+      }else
          return -1;
-      else
-         return actCars.getCar(location).getNumAvail();
    }
 
    public int queryCarsPrice(int xid, String location)
@@ -914,11 +997,14 @@ implements ResourceManager {
       }
 
       //transaction got the S-lock
-
-      if(!actCars.containsCar(location))
+      if(actCars.containsCar(location)){
+         if(actCars.isSameTransaction(location, xid)){
+            return actCars.getCar(location).getPrice();
+         }else{
+            return cars.getCar(location).getPrice();
+         }
+      }else
          return -1;
-      else
-         return actCars.getCar(location).getPrice();
    }
 
    public boolean queryCarHasReserve(int xid, String location)

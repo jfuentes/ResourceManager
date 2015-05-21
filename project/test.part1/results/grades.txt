@@ -835,3 +835,66 @@ After dieAfterPointerSwitch is set, server does not die during commit.
 
 ============================================
 Your final score is 52/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 52/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldelcus)	-5
+deleteCustomer does not lock and un-reserve reservations.
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 52/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 57/100

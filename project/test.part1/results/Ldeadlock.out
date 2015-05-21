@@ -44,5 +44,5 @@ Bound to RM
 [2] 	LINE--2 except transaction.TransactionAbortedException
 [1] 	LINE--1 call commit xid
 [1] Calling commit
-[1] commit exceptioned: java.rmi.ConnectIOException
+[1] commit exceptioned: java.rmi.UnmarshalException
 [1] 	LINE--1 return true
