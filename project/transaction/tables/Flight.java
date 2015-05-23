@@ -1,7 +1,8 @@
-package tables;
+package transaction.tables;
+import java.io.Serializable;
 //implementation of a Tuple for Flights table
 
-public class Flight{
+public class Flight implements Serializable{
   //attributes
   private String flightNum; //primary key
   private int price;

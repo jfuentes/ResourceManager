@@ -1,27 +1,29 @@
-package tables;
+package transaction.tables;
+
+import java.io.Serializable;
 //implementation of a Tuple for Flights table
 
-public class Car{
+public class Hotel implements Serializable{
 	//attributes
 	private String location;
 	private int price;
-	private int numCars;
+	private int numRooms;
 	private int numAvail;
 
 	private int lastTransactionUpdate; //-1 if it was commited
 
-	public Car(String location, int price, int numCars, int numAvail){
+	public Hotel(String location, int price, int numRooms, int numAvail){
 		this.location = location;
 		this.price = price;
-		this.numCars = numCars;
+		this.numRooms = numRooms;
 		this.numAvail = numAvail;
 		lastTransactionUpdate=-1;
 	}
 
-	public Car(String location, int price, int numCars, int numAvail, int xid){
+	public Hotel(String location, int price, int numRooms, int numAvail, int xid){
 		this.location = location;
 		this.price = price;
-		this.numCars = numCars;
+		this.numRooms = numRooms;
 		this.numAvail = numAvail;
 		lastTransactionUpdate=xid;
 	}
@@ -42,12 +44,12 @@ public class Car{
 		this.price = price;
 	}
 
-	public int getNumCars(){
-		return numCars;
+	public int getNumRooms(){
+		return numRooms;
 	}
 
-	public void setNumCars(int numCars){
-		this.numCars = numCars;
+	public void setNumRooms(int numRooms){
+		this.numRooms = numRooms;
 	}
 
 	public int getNumAvail(){
@@ -59,18 +61,18 @@ public class Car{
 	}
 
 	public void setLastTransactionUpdate(int t){
-	lastTransactionUpdate=t;
-	}
+     lastTransactionUpdate=t;
+  }
 
-	public int getLastTransactionUpdate(){
-		return lastTransactionUpdate;
-	}
+  public int getLastTransactionUpdate(){
+     return lastTransactionUpdate;
+  }
 
 	public String toString(){
-    return location+"  "+price+"  "+numCars+"  "+numAvail;
-   }
+		return location+"  "+price+"  "+numRooms+"  "+numAvail;
+	}
 
-	public Car clone(){
-		return new Car(location, price, numCars, numAvail);
+	public Hotel clone(){
+		return new Hotel(location, price, numRooms, numAvail);
 	}
 }

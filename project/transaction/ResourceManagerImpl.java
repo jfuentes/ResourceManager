@@ -1,11 +1,21 @@
+/***
+*
+* CS223 Resource Manager
+* Authors: Joel Fuentes - Ling Ji
+*
+****/
+
+
 package transaction;
 
-import tables.*;
+import transaction.tables.*;
 import lockmgr.*;
 import java.rmi.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -46,6 +56,7 @@ implements ResourceManager {
 
    //transactions
    private HashMap<Integer, ArrayList<OperationPair>> activeTransactions;
+   private Set<Integer> abortedTransactions;
 
    //first part of Data id
    public static final String FLIGHT = "flight";
@@ -54,64 +65,76 @@ implements ResourceManager {
    public static final String RESERVATION = "reservation";
 
    //paths for db on disk
-   public static final String FLIGHT_DB = "../tables/"+FLIGHT+".db";
-   public static final String FLIGHT_ACTIVE_DB = "../tables/"+FLIGHT+"_active.db";
-   public static final String CAR_DB = "../tables/"+CAR+".db";
-   public static final String CAR_ACTIVE_DB = "../tables/"+CAR+"_active.db";
-   public static final String HOTEL_DB = "../tables/"+HOTEL+".db";
-   public static final String HOTEL_ACTIVE_DB = "../tables/"+HOTEL+"_active.db";
-   public static final String RESERVATION_DB = "../tables/"+RESERVATION+".db";
-   public static final String RESERVATION_ACTIVE_DB = "../tables/"+RESERVATION+"_active.db";
+   public static final String DIR_DB = "data";
+   public static final String FLIGHT_DB = DIR_DB+"/"+FLIGHT+".db";
+   public static final String FLIGHT_ACTIVE_DB = DIR_DB+"/"+FLIGHT+"_active.db";
+   public static final String CAR_DB = DIR_DB+"/"+CAR+".db";
+   public static final String CAR_ACTIVE_DB = DIR_DB+"/"+CAR+"_active.db";
+   public static final String HOTEL_DB = DIR_DB+"/"+HOTEL+".db";
+   public static final String HOTEL_ACTIVE_DB = DIR_DB+"/"+HOTEL+"_active.db";
+   public static final String RESERVATION_DB = DIR_DB+"/"+RESERVATION+".db";
+   public static final String RESERVATION_ACTIVE_DB = DIR_DB+"/"+RESERVATION+"_active.db";
+   public static final String TRANSACTIONS_DB = "data/transactions.db";
 
    //shutdown flags
-   private Boolean bool = true;
-   private boolean shutdownflag = false;
+   private boolean shutdown = false;
    private final Object lock = new Object();
+   private boolean dieBeforeSwitch=false;
+   private boolean dieAfterSwitch=false;
 
    public static void main(String args[]) {
-      System.setSecurityManager(new RMISecurityManager());
+         System.setSecurityManager(new RMISecurityManager());
 
-      String rmiName = System.getProperty("rmiName");
-      if (rmiName == null || rmiName.equals("")) {
-         rmiName = ResourceManager.DefaultRMIName;
-      }
+         String rmiName = System.getProperty("rmiName");
+         if (rmiName == null || rmiName.equals("")) {
+            rmiName = ResourceManager.DefaultRMIName;
+         }
 
-      String rmiRegPort = System.getProperty("rmiRegPort");
-      if (rmiRegPort != null && !rmiRegPort.equals("")) {
-         rmiName = "//:" + rmiRegPort + "/" + rmiName;
-      }
+         String rmiRegPort = System.getProperty("rmiRegPort");
+         if (rmiRegPort != null && !rmiRegPort.equals("")) {
+            rmiName = "//:" + rmiRegPort + "/" + rmiName;
+         }
 
-      try {
-         ResourceManagerImpl obj = new ResourceManagerImpl();
-         Naming.rebind(rmiName, obj);
-         System.out.println("RM bound");
+         try {
+            ResourceManagerImpl obj = new ResourceManagerImpl();
+            Naming.rebind(rmiName, obj);
+            System.out.println("RM bound");
+         }
+         catch (Exception e) {
+            System.err.println("RM not bound:" + e);
+            System.exit(1);
+         }
       }
-      catch (Exception e) {
-         System.err.println("RM not bound:" + e);
-         System.exit(1);
-      }
-   }
 
 
    public ResourceManagerImpl() throws RemoteException {
-      //recover();  //recover db
-      cars = new Cars();
-      hotels = new Hotels();
-      flights = new Flights();
-      reservations = new Reservations();
-
-
-      actCars=new Cars();
-      actHotels=new Hotels();
-      actFlights= new Flights();
-      actReservations= new Reservations();
+      checkDirectoryDB();
+      recover();  //recover db
 
       activeTransactions = new HashMap<Integer, ArrayList<OperationPair>>();
+      abortedTransactions = new HashSet<Integer>();
+
+
       lm = new LockManager();
 
       xidCounter = 0;
 
       System.out.println("ResourceManager started");
+   }
+
+   private void checkDirectoryDB(){
+      File theDir = new File(DIR_DB);
+
+      // if the directory does not exist, create it
+      if (!theDir.exists()) {
+         try{
+            theDir.mkdir();
+         }
+         catch(SecurityException se){
+            //handle it
+         }
+
+      }
    }
 
    private boolean recover(){
@@ -137,6 +160,7 @@ implements ResourceManager {
          ioe.printStackTrace();
 			return false;
 		}
+
 
       //cars
       file = new File(CAR_DB);
@@ -210,8 +234,115 @@ implements ResourceManager {
 			return false;
 		}
 
+
+
+
+      //Active DB
+
+      //flights
+      file = new File(FLIGHT_ACTIVE_DB);
+
+		try{
+			//check if pointer file exists
+			if(!file.exists()){
+            actFlights = new Flights();
+			}else{
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(FLIGHT_ACTIVE_DB));
+            actFlights = (Flights) in.readObject();
+			   in.close();
+
+            //check for active table (pendient)
+         }
+		} catch(IOException ioe) {
+         ioe.printStackTrace();
+			return false;
+		} catch(ClassNotFoundException ioe) {
+         ioe.printStackTrace();
+			return false;
+		}
+
+
+      //cars
+      file = new File(CAR_ACTIVE_DB);
+
+		try{
+			//check if pointer file exists
+			if(!file.exists()){
+            actCars = new Cars();
+			}else{
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(CAR_ACTIVE_DB));
+			   Object obj = in.readObject();
+			   in.close();
+
+            actCars  = (Cars) obj;
+
+            //check for active table (pendient)
+         }
+		} catch(IOException ioe) {
+         ioe.printStackTrace();
+			return false;
+		} catch(ClassNotFoundException ioe) {
+         ioe.printStackTrace();
+			return false;
+		}
+
+      //hotels
+      file = new File(HOTEL_ACTIVE_DB);
+
+		try{
+			//check if pointer file exists
+			if(!file.exists()){
+            actHotels = new Hotels();
+			}else{
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(HOTEL_ACTIVE_DB));
+			   Object obj = in.readObject();
+			   in.close();
+
+            actHotels  = (Hotels) obj;
+
+            //check for active table (pendient)
+         }
+		} catch(IOException ioe) {
+         ioe.printStackTrace();
+			return false;
+		} catch(ClassNotFoundException ioe) {
+         ioe.printStackTrace();
+			return false;
+		}
+
+      //reservations
+      file = new File(RESERVATION_ACTIVE_DB);
+
+		try{
+			//check if pointer file exists
+			if(!file.exists()){
+            actReservations = new Reservations();
+			}else{
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(RESERVATION_ACTIVE_DB));
+			   Object obj = in.readObject();
+			   in.close();
+
+            actReservations  = (Reservations) obj;
+
+            //check for active table (pendient)
+         }
+		} catch(IOException ioe) {
+         ioe.printStackTrace();
+			return false;
+		} catch(ClassNotFoundException ioe) {
+         ioe.printStackTrace();
+			return false;
+		}
+
       return true;
 
+   }
+
+   private void checkAfterFailure()throws RemoteException, InvalidTransactionException{
+      Set<Integer> transSet= activeTransactions.keySet();
+		for(Integer xid: transSet){ //there is an uncommited transaction after failure, it must abort
+			abort(xid);
+		}
    }
 
 
@@ -219,7 +350,7 @@ implements ResourceManager {
    public int start()
    throws RemoteException {
 
-      if(!shutdownflag){ //if there is no shutdown request
+      if(!shutdown){ //if there is no shutdown request
 
          xidCounter++;
 
@@ -232,9 +363,13 @@ implements ResourceManager {
 
    }
 
-   public void checkTransactionID(int xid) throws InvalidTransactionException{
-      if(!activeTransactions.containsKey(xid))
+   public void checkTransactionID(int xid) throws RemoteException, InvalidTransactionException, TransactionAbortedException{
+      if(!activeTransactions.containsKey(xid) && activeTransactions.size()==0){
+         throw new TransactionAbortedException(xid, "xid transaction aborted previously");
+      }else  if(!activeTransactions.containsKey(xid)){
          throw new InvalidTransactionException(xid, "xid transaction invalid");
+      }
+
    }
 
    public boolean commit(int xid) throws RemoteException, TransactionAbortedException,
@@ -242,9 +377,6 @@ implements ResourceManager {
       checkTransactionID(xid);
       System.out.println("Committing");
       boolean updateFlight=false, updateCar=false, updateHotel=false, updateReservation=false;
-
-      if(!activeTransactions.containsKey(xid))
-         return false;
 
       //reflect the changes over the non-active database
       ArrayList<OperationPair> operations = activeTransactions.get(xid);
@@ -299,58 +431,50 @@ implements ResourceManager {
       }
 
       activeTransactions.remove(xid);
+      //updateTransactionsOnDisk();
+
+      if(dieBeforeSwitch)
+         System.exit(0);
 
       //update tables on disk (active and non-active)
-   /*   if(updateFlight)
+      if(updateFlight)
          updateTableOnDisk(FLIGHT);
       if(updateCar)
          updateTableOnDisk(CAR);
       if(updateHotel)
          updateTableOnDisk(HOTEL);
       if(updateReservation)
-         updateTableOnDisk(RESERVATION); */
+         updateTableOnDisk(RESERVATION);
 
       lm.unlockAll(xid); // release the lock
 
-      if(shutdownflag){
-         if(activeTransactions.size()==0){ //this is the last transaction
-            goShutDown();
 
-         }
-      }
+      if(dieAfterSwitch)
+         System.exit(0);
 
-      //System.out.println(toStringNonActiveDB(FLIGHT));
-      //System.out.println(toStringNonActiveDB(CAR));
-      //System.out.println(toStringNonActiveDB(HOTEL));
-      //System.out.println(toStringNonActiveDB(RESERVATION));
+
       return true;
    }
 
    public void abort(int xid)throws RemoteException, InvalidTransactionException {
       //PENDIENT: not commit, but undo active database?
-      checkTransactionID(xid);
+      //checkTransactionID(xid);
 
       undoOperations(xid);
+      //updateTransactionsOnDisk();
       activeTransactions.remove(xid);
+      abortedTransactions.add(xid);
 
       lm.unlockAll(xid); // release the lock
 
-      if(shutdownflag){
-         if(activeTransactions.size()==0){ //this is the last transaction
-            goShutDown();
-
-         }
-      }
-      return;
+         return;
    }
 
    private boolean undoOperations(int xid)throws RemoteException,
    InvalidTransactionException {
-      checkTransactionID(xid);
+
       System.out.println("Undo");
 
-      if(!activeTransactions.containsKey(xid))
-         return false;
 
       //reflect the changes over the non-active database
       ArrayList<OperationPair> operations = activeTransactions.get(xid);
@@ -383,8 +507,12 @@ implements ResourceManager {
                   actHotels.deleteHotel(op.getKey());
                break;
 
-            case RESERVATION:  actReservations.addReservations(op.getKey(), actReservations.getCloneReservations(op.getKey()));
-            break;
+            case RESERVATION:
+               if(reservations.containsCustomer(op.getKey()))
+                  actReservations.addReservations(op.getKey(), reservations.getCloneReservations(op.getKey()));
+               else
+                  actReservations.deleteCustomer(op.getKey());
+               break;
 
             default: throw new InvalidTransactionException(xid, "Problem merging values to non-active db");
 
@@ -392,6 +520,22 @@ implements ResourceManager {
       }
       return true;
 
+   }
+
+   public void updateTransactionsOnDisk(){
+      try{
+            File file = new File(TRANSACTIONS_DB);
+            if(!file.exists()) {
+               file.createNewFile();
+            }
+            FileOutputStream fout = new FileOutputStream(file, false);
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(activeTransactions);
+            oos.close();
+
+      }catch(Exception ex){
+            ex.printStackTrace();
+      }
    }
 
    private void updateTableOnDisk(String table){
@@ -414,7 +558,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
-               fout = new FileOutputStream(FLIGHT_ACTIVE_DB);
+               fout = new FileOutputStream(FLIGHT_ACTIVE_DB, false);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actFlights);
                oos.close();
@@ -428,7 +572,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
- 		         FileOutputStream fout = new FileOutputStream(CAR_DB);
+ 		         FileOutputStream fout = new FileOutputStream(CAR_DB,false);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(cars);
 		         oos.close();
@@ -438,7 +582,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
-               fout = new FileOutputStream(CAR_ACTIVE_DB);
+               fout = new FileOutputStream(CAR_ACTIVE_DB, false);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actCars);
                oos.close();
@@ -452,7 +596,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
- 		         FileOutputStream fout = new FileOutputStream(HOTEL_DB);
+ 		         FileOutputStream fout = new FileOutputStream(HOTEL_DB, false);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(hotels);
 		         oos.close();
@@ -462,7 +606,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
-               fout = new FileOutputStream(HOTEL_ACTIVE_DB);
+               fout = new FileOutputStream(HOTEL_ACTIVE_DB, false);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actHotels);
                oos.close();
@@ -476,7 +620,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
- 		         FileOutputStream fout = new FileOutputStream(RESERVATION_DB);
+ 		         FileOutputStream fout = new FileOutputStream(RESERVATION_DB, false);
 		         ObjectOutputStream oos = new ObjectOutputStream(fout);
 		         oos.writeObject(reservations);
 		         oos.close();
@@ -486,7 +630,7 @@ implements ResourceManager {
                if(!file.exists()) {
                   file.createNewFile();
                }
-               fout = new FileOutputStream(RESERVATION_ACTIVE_DB);
+               fout = new FileOutputStream(RESERVATION_ACTIVE_DB, false);
                oos = new ObjectOutputStream(fout);
                oos.writeObject(actReservations);
                oos.close();
@@ -501,6 +645,8 @@ implements ResourceManager {
    public boolean addFlight(int xid, String flightNum, int numSeats, int price)
    throws RemoteException, TransactionAbortedException, InvalidTransactionException {
       checkTransactionID(xid);
+
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.WRITE)){
@@ -510,7 +656,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //the transaction got the X-lock
@@ -524,7 +670,6 @@ implements ResourceManager {
       activeTransactions.put(xid, operations);
 
 
-
       return true;
    }
 
@@ -532,6 +677,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
 
       //check if there is any reservation over this flight
@@ -550,7 +696,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //the transaction got the X-lock
@@ -563,7 +709,6 @@ implements ResourceManager {
       activeTransactions.put(xid, operations);
 
 
-
       return true;
    }
 
@@ -571,6 +716,7 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
 
       //first get a lock for updating the table
@@ -582,7 +728,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //the transaction got the X-lock
@@ -595,7 +741,6 @@ implements ResourceManager {
       operations.add(new OperationPair(HOTEL, location));
       activeTransactions.put(xid, operations);
 
-
       return true;
    }
 
@@ -603,7 +748,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.WRITE)){
@@ -613,7 +760,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
       //the transaction got the X-lock
       //add/uptade the hotel in the table
@@ -631,7 +778,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
@@ -641,7 +790,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //the transaction got the X-lock
@@ -660,7 +809,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, CAR + location, LockManager.WRITE)){
@@ -670,7 +821,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
       //the transaction got the X-lock
       //add/uptade the car in the table
@@ -688,7 +839,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
@@ -698,7 +851,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //the transaction got the X-lock
@@ -717,7 +870,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       //first get a lock for updating the table
       try{
          if(!lm.lock(xid, RESERVATION + custName, LockManager.WRITE)){
@@ -727,7 +882,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
       //the transaction got the X-lock
 
@@ -746,7 +901,7 @@ implements ResourceManager {
                //deal with the deadlock
                //abort the transaction
                abort(xid);
-               return false;
+               throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
             }
 
             actFlights.cancelReservation(pair.getResvKey());
@@ -760,7 +915,7 @@ implements ResourceManager {
                //deal with the deadlock
                //abort the transaction
                abort(xid);
-               return false;
+               throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
             }
 
             actHotels.cancelReservation(pair.getResvKey());
@@ -774,7 +929,7 @@ implements ResourceManager {
                //deal with the deadlock
                //abort the transaction
                abort(xid);
-               return false;
+               throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
             }
 
             actCars.cancelReservation(pair.getResvKey());
@@ -800,7 +955,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.READ)){
             return -1;
@@ -809,7 +966,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -828,7 +985,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.READ)){
             return -1;
@@ -837,7 +996,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -855,7 +1014,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, FLIGHT + flightNum, LockManager.READ)){
             return false;
@@ -864,7 +1025,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -879,6 +1040,7 @@ implements ResourceManager {
    TransactionAbortedException,
    InvalidTransactionException {
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
             return -1;
@@ -887,18 +1049,14 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
-      //transaction got the S-lock
-      if(actHotels.containsHotel(location)){
-         if(actHotels.isSameTransaction(location, xid)){
-            return actHotels.getHotel(location).getNumAvail();
-         }else{
-            return hotels.getHotel(location).getNumAvail();
-         }
-      }else
+
+      if(!actHotels.containsHotel(location))
          return -1;
+      else
+         return actHotels.getHotel(location).getNumAvail();
    }
 
    public int queryRoomsPrice(int xid, String location)
@@ -906,6 +1064,7 @@ implements ResourceManager {
    TransactionAbortedException,
    InvalidTransactionException {
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
             return -1;
@@ -914,26 +1073,27 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
 
-      if(actHotels.containsHotel(location)){
-         if(actHotels.isSameTransaction(location, xid)){
-            return actHotels.getHotel(location).getPrice();
-         }else{
-            return hotels.getHotel(location).getPrice();
-         }
-      }else
+
+      if(!actHotels.containsHotel(location))
          return -1;
+      else
+         return actHotels.getHotel(location).getPrice();
    }
 
    public boolean queryHotelHasReserve(int xid, String location)
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
+
+
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
             return false;
@@ -942,7 +1102,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -957,7 +1117,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, CAR + location, LockManager.READ)){
             return -1;
@@ -966,7 +1128,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -984,7 +1146,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, CAR + location, LockManager.READ)){
             return -1;
@@ -993,7 +1157,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -1011,7 +1175,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       try{
          if(!lm.lock(xid, HOTEL + location, LockManager.READ)){
             return false;
@@ -1020,7 +1186,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       //transaction got the S-lock
@@ -1035,7 +1201,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       int bill=0;
 
       try{
@@ -1046,7 +1214,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return -1;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       if(!actReservations.containsCustomer(custName))
@@ -1074,7 +1242,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
 
       if(!actFlights.containsFlight(flightNum)) // the flight was recently removed?
          return false;
@@ -1092,7 +1262,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       try{ //get the lock to reserve the seat
@@ -1103,7 +1273,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       if(actFlights.reserveSeat(flightNum, 1)){
@@ -1125,7 +1295,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       if(!actCars.containsCar(location)) // the flight was recently removed?
          return false;
 
@@ -1142,7 +1314,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
 
@@ -1154,7 +1326,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       if(actCars.reserveCar(location, 1)){
@@ -1179,7 +1351,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+
       checkTransactionID(xid);
+
       if(!actHotels.containsHotel(location)) // the flight was recently removed?
          return false;
 
@@ -1196,7 +1370,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       try{ //get the lock to reserve the room
@@ -1207,7 +1381,7 @@ implements ResourceManager {
          //deal with the deadlock
          //abort the transaction
          abort(xid);
-         return false;
+         throw new TransactionAbortedException(xid, "Transaction aborted by deadlock issue");
       }
 
       if(actHotels.reserveRoom(location, 1)){
@@ -1229,47 +1403,47 @@ implements ResourceManager {
    throws RemoteException {
       //wait for all active transactions end.
       //do not allow more transactions
-      //shutdownflag=true;
-      //waitForShutDown();
+      shutdown=true;
+      waitForShutDown();
       System.exit(0);
       return true;
    }
 
    public boolean dieNow()
    throws RemoteException {
+      //remove the DB files to get new tests
+
+
       System.exit(1);
       return true; // We won't ever get here since we exited above;
       // but we still need it to please the compiler.
    }
 
+
    public boolean dieBeforePointerSwitch()
    throws RemoteException {
+      dieBeforeSwitch=true;
       return true;
    }
 
    public boolean dieAfterPointerSwitch()
    throws RemoteException {
+      dieAfterSwitch=true;
       return true;
    }
 
-   private Boolean waitForShutDown(){
-      synchronized(lock){
-         try{
-            while (bool) {
-               bool.wait();
-            }
-         }catch(InterruptedException e){
-            System.out.println("InterruptedException - waitForShutDown");
-         }
+   private boolean waitForShutDown(){
+      while(activeTransactions.size()>0){
+      try {
+         Thread.sleep(1000);                 //1000 milliseconds is one second.
+      } catch(InterruptedException ex) {
+         Thread.currentThread().interrupt();
       }
-      return bool;
-   }
-   public void goShutDown(){
-      synchronized(lock){
-         bool = false;
-         bool.notify();
       }
+      return true;
    }
+
+
 
    public String toStringNonActiveDB(String nameTable){
       String s="table: "+nameTable+"\n";
@@ -1288,22 +1462,6 @@ implements ResourceManager {
    }
 
 
-   private class OperationPair{
-      private String table;
-      private String key;
 
-      public OperationPair(String table, String key){
-         this.table = table;
-         this.key = key;
-      }
-
-      public String getTable(){
-         return table;
-      }
-
-      public String getKey(){
-         return key;
-      }
-   }
 
 }

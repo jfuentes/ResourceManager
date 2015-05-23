@@ -1,4 +1,4 @@
-package tables;
+package transaction.tables;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,8 @@ public class Hotels implements Serializable{
 			Hotel hotel = table.get(location);
 			if(price>=0)
 				hotel.setPrice(price); //update to the new price
-			hotel.setNumRooms(numRooms+hotel.getNumRooms()); //add the new cars
+			hotel.setNumRooms(numRooms+hotel.getNumRooms()); //add the new rooms
+			hotel.setNumAvail(numRooms+hotel.getNumAvail()); //add the new rooms
 			hotel.setLastTransactionUpdate(xid);
 			table.put(location, hotel);
 		}else
@@ -57,7 +58,8 @@ public class Hotels implements Serializable{
 		Hotel hotel = table.get(location);
 		if(hotel.getNumAvail() < numRooms)
 			return false;
-		hotel.setNumAvail(hotel.getNumAvail()-numRooms); //add the new rooms
+		hotel.setNumAvail(hotel.getNumAvail()-numRooms);
+		hotel.setNumRooms(hotel.getNumRooms()-numRooms);
 		table.put(location, hotel);
 		return true;
 	}

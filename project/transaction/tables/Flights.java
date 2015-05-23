@@ -1,5 +1,5 @@
 //implementation of the Flights table
-package tables;
+package transaction.tables;
 
 import java.util.HashMap;
 import java.util.Map;

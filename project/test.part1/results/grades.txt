@@ -898,3 +898,439 @@ After dieAfterPointerSwitch is set, server does not die during commit.
 
 ============================================
 Your final score is 57/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 57/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 57/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Ldeadlock)	-3
+Deadlocked transaction is not aborted.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 57/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 60/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddabt)	-100
+abort fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 65/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Stoomanydel)	-3
+Allows delete of more than available items.
+
+(Lbillres)	-5
+queryCustomerBill does not lock to prevent new reservations.
+
+(Lcmtother)	-5
+One transaction commits another transaction's changes.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 52/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Saddcmtdelcmt)	-10
+Cannot delete items.
+
+(Saddcmtdelrsv)	-3
+Allows reservation of items deleted earlier in same transaction.
+
+(Ldel)	-5
+delete does not acquire exclusive lock.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 47/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 65/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmtrd)	-100
+Query of flight/rooms/cars/customer does not return correct result.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 79/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 79/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Bstart)	-100
+start() call fails.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 79/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Bstart)	-100
+start() call fails.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Baddcmt)	-100
+commit fails after adding flight/rooms/cars/customer.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddierd)	-5
+After failure, transaction is not forcibly aborted.
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4)	-10
+dieBeforePointerSwitch fails.
+
+(Fdieaft)	-10
+dieAfterPointerSwitch fails.
+
+============================================
+Your final score is 74/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Bstart)	-100
+start() call fails.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Bstart)	-100
+start() call fails.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Bstart)	-100
+start() call fails.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddierd)	-5
+After failure, transaction is not forcibly aborted.
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4)	-10
+dieBeforePointerSwitch fails.
+
+(Fdieaft)	-10
+dieAfterPointerSwitch fails.
+
+============================================
+Your final score is 74/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Bstart)	-100
+start() call fails.
+
+============================================
+Your final score is 0/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddierd)	-5
+After failure, transaction is not forcibly aborted.
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4)	-10
+dieBeforePointerSwitch fails.
+
+(Fdieaft)	-10
+dieAfterPointerSwitch fails.
+
+============================================
+Your final score is 74/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 65/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 79/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 79/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Fdieb4cmt)	-10
+After dieBeforePointerSwitch is set, server does not die during commit.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 77/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Fdieb4self)	-10
+After dieBeforePointerSwitch, transaction is not forcibly aborted, or previous committed transactions are lost.
+
+(Fdieaftcmt)	-10
+After dieAfterPointerSwitch is set, server does not die during commit.
+
+============================================
+Your final score is 77/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Fdieaftself)	-10
+After dieAfterPointerSwitch, transaction is not committed, or previous committed transactions are lost.
+
+============================================
+Your final score is 87/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Faddcmtdierd)	-15
+After failure, previous committed transactions are lost.
+
+(Fdieb4self)	-10
+After dieBeforePointerSwitch, transaction is not forcibly aborted, or previous committed transactions are lost.
+
+(Fdieaftself)	-10
+After dieAfterPointerSwitch, transaction is not committed, or previous committed transactions are lost.
+
+============================================
+Your final score is 62/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Fdieaftself)	-10
+After dieAfterPointerSwitch, transaction is not committed, or previous committed transactions are lost.
+
+============================================
+Your final score is 87/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+(Sbadxid)	-3
+Bogus xid does not throw InvalidTransactionException.
+
+(Fadddiexid)	-1
+Forcibly aborted transaction does not throw TransactionAbortedException.
+
+============================================
+Your final score is 96/100
+For each test your code failed, we have listed the points deducted and the most likely reason:
+
+============================================
+Your final score is 100/100

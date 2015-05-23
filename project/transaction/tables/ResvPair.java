@@ -1,7 +1,9 @@
-package tables;
+package transaction.tables;
+
+import java.io.Serializable;
 
 //combine resvType and resvKey as a value pair
-public class ResvPair{
+public class ResvPair implements Serializable{
    private int resvType;
    private String resvKey;
 

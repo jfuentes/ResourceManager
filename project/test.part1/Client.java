@@ -48,7 +48,7 @@ public class Client {
 	for (int i=1; i<=numThreads; i++) {
 	    new myThread(String.valueOf(i)).start();
 	}
-	
+
 	try {
 	    Thread.sleep(TESTTIMEOUT);
 	} catch (InterruptedException e) {
@@ -67,7 +67,7 @@ public class Client {
 	    System.exit(1);
 	}
     }
-    
+
     private static void launch() {
 	String toLaunch = ResourceManager.DefaultRMIName;
 	String rmiPort = System.getProperty("rmiPort");
@@ -111,11 +111,11 @@ public class Client {
 
     private static class myThread extends Thread {
 	private String id = null;
-	
+
 	public myThread (String myid) {
 	    id = myid;
 	}
-	
+
 	public void run() {
 	    System.out.println("[" + id + "] Thread running.");
 
@@ -157,7 +157,7 @@ public class Client {
 		    }
 		    System.in.notifyAll();
 		}
-		
+
 		System.out.println("[" + id + "] \tLINE--" + myLine);
 		StringTokenizer st = new StringTokenizer(myLine);
 		if (!st.nextToken().equals(id)) {
@@ -202,7 +202,7 @@ public class Client {
 		    }
 
 		    System.out.println("[" + id + "] Calling " + methodName);
-		    Object retVal = null; 
+		    Object retVal = null;
 		    Throwable retExc = null;
 		    try {
 			retVal = method.invoke(rm, params);
@@ -211,7 +211,7 @@ public class Client {
 			System.err.println("[" + id + "] " + methodName + " got IllegalAccessException: " + e);
 			System.exit(1);
 		    } catch (IllegalArgumentException e) {
-			System.err.println("[" + id + "] " + methodName + " got IllegalArgumentException: " + e); 
+			System.err.println("[" + id + "] " + methodName + " got IllegalArgumentException: " + e);
                         System.exit(1);
 		    } catch (InvocationTargetException e) {
 			retExc = e.getTargetException();
@@ -279,7 +279,7 @@ public class Client {
 			    System.err.println("[" + id + "] Return rather than exception: " + retVal);
 			    cleanUpExit(2);
 			}
-			
+
 			if (st.hasMoreTokens()) {
 			    String expExc = st.nextToken();
 			    try {
@@ -302,7 +302,7 @@ public class Client {
  		}
 	    }
 	}
-	
+
 	private Method findMethod(String methodName) {
 	    Method[] allMethods = rm.getClass().getMethods();
 	    for (int i=0; i<allMethods.length; i++) {

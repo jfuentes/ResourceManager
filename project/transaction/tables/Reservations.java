@@ -1,5 +1,5 @@
 //implementation of the Reservations table
-package tables;
+package transaction.tables;
 
 import java.util.ArrayList;
 import java.util.HashMap;

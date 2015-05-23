@@ -1,4 +1,4 @@
-package tables;
+package transaction.tables;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,7 @@ public class Cars implements Serializable{
 			if(price>=0)
 				car.setPrice(price); //update to the new price
 			car.setNumCars(numCars+car.getNumCars()); //add the new cars
+			car.setNumAvail(numCars+car.getNumAvail()); //add the new cars
 			car.setLastTransactionUpdate(xid);
 			table.put(location, car);
 		}else
@@ -42,7 +43,8 @@ public class Cars implements Serializable{
 		Car car = table.get(location);
 		if(car.getNumAvail() < numCars)
 			return false;
-		car.setNumAvail(car.getNumAvail()-numCars); //add the new cars
+		car.setNumAvail(car.getNumAvail()-numCars);
+		car.setNumCars(car.getNumCars()-numCars);
 		table.put(location, car);
 		return true;
 	}

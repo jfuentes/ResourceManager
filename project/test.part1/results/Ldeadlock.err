@@ -1,3 +1,0 @@
-[2] Return rather than exception: -1
-[1] Exception rather than return: java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is: 
-	java.io.EOFException

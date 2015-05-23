@@ -327,6 +327,7 @@ public interface ResourceManager extends Remote {
      */
     public boolean dieNow()
 	throws RemoteException;
+
     /**
      * Sets a flag so that the RM fails in the middle of the next
      * commit operation.  Specifically, using shadow paging, you

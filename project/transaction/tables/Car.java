@@ -1,27 +1,29 @@
-package tables;
+package transaction.tables;
+
+import java.io.Serializable;
 //implementation of a Tuple for Flights table
 
-public class Hotel{
+public class Car implements Serializable{
 	//attributes
 	private String location;
 	private int price;
-	private int numRooms;
+	private int numCars;
 	private int numAvail;
 
 	private int lastTransactionUpdate; //-1 if it was commited
 
-	public Hotel(String location, int price, int numRooms, int numAvail){
+	public Car(String location, int price, int numCars, int numAvail){
 		this.location = location;
 		this.price = price;
-		this.numRooms = numRooms;
+		this.numCars = numCars;
 		this.numAvail = numAvail;
 		lastTransactionUpdate=-1;
 	}
 
-	public Hotel(String location, int price, int numRooms, int numAvail, int xid){
+	public Car(String location, int price, int numCars, int numAvail, int xid){
 		this.location = location;
 		this.price = price;
-		this.numRooms = numRooms;
+		this.numCars = numCars;
 		this.numAvail = numAvail;
 		lastTransactionUpdate=xid;
 	}
@@ -42,12 +44,12 @@ public class Hotel{
 		this.price = price;
 	}
 
-	public int getNumRooms(){
-		return numRooms;
+	public int getNumCars(){
+		return numCars;
 	}
 
-	public void setNumRooms(int numRooms){
-		this.numRooms = numRooms;
+	public void setNumCars(int numCars){
+		this.numCars = numCars;
 	}
 
 	public int getNumAvail(){
@@ -59,18 +61,18 @@ public class Hotel{
 	}
 
 	public void setLastTransactionUpdate(int t){
-     lastTransactionUpdate=t;
-  }
-
-  public int getLastTransactionUpdate(){
-     return lastTransactionUpdate;
-  }
-
-	public String toString(){
-		return location+"  "+price+"  "+numRooms+"  "+numAvail;
+	lastTransactionUpdate=t;
 	}
 
-	public Hotel clone(){
-		return new Hotel(location, price, numRooms, numAvail);
+	public int getLastTransactionUpdate(){
+		return lastTransactionUpdate;
+	}
+
+	public String toString(){
+    return location+"  "+price+"  "+numCars+"  "+numAvail;
+   }
+
+	public Car clone(){
+		return new Car(location, price, numCars, numAvail);
 	}
 }
