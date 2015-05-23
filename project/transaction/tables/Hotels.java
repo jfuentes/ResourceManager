@@ -17,17 +17,16 @@ public class Hotels implements Serializable{
 	 * Methods to add, update, remove and search tuples on the table
 	 **/
 
-	public boolean addRooms(String location, int price, int numRooms, int xid){
+	public boolean addRooms(String location, int price, int numRooms){
 		if(table.containsKey(location)){
 			Hotel hotel = table.get(location);
 			if(price>=0)
 				hotel.setPrice(price); //update to the new price
 			hotel.setNumRooms(numRooms+hotel.getNumRooms()); //add the new rooms
 			hotel.setNumAvail(numRooms+hotel.getNumAvail()); //add the new rooms
-			hotel.setLastTransactionUpdate(xid);
 			table.put(location, hotel);
 		}else
-			table.put(location, new Hotel(location, price, numRooms, numRooms, xid));
+			table.put(location, new Hotel(location, price, numRooms, numRooms));
 		return true;
 	}
 
@@ -77,11 +76,6 @@ public class Hotels implements Serializable{
 			return false;
 	}
 
-	public boolean isSameTransaction(String location, int xid){
-     if(containsHotel(location))
-         return table.get(location).getLastTransactionUpdate()==xid;
-     else return false;
-   }
 
 	public boolean cancelReservation(String location){
      if(table.containsKey(location)){

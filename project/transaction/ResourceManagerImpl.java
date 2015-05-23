@@ -38,6 +38,7 @@ implements ResourceManager {
    protected int flightcounter, flightprice, carscounter, carsprice, roomscounter, roomsprice;
 
    protected int xidCounter;
+   private String rmiName;
 
    //get instances of tables
    private Cars cars;
@@ -59,10 +60,11 @@ implements ResourceManager {
    private Set<Integer> abortedTransactions;
 
    //first part of Data id
-   public static final String FLIGHT = "flight";
-   public static final String CAR = "car";
-   public static final String HOTEL = "hotel";
-   public static final String RESERVATION = "reservation";
+   public static final String FLIGHT = "RMFlights";
+   public static final String CAR = "RMCars";
+   public static final String HOTEL = "RMHotels";
+   public static final String RESERVATION = "RMReservations";
+   public static final String CUSTOMER = "RMCustomers";
 
    //paths for db on disk
    public static final String DIR_DB = "data";
@@ -90,13 +92,16 @@ implements ResourceManager {
             rmiName = ResourceManager.DefaultRMIName;
          }
 
+         String rmiName2 = rmiName;
+
          String rmiRegPort = System.getProperty("rmiRegPort");
          if (rmiRegPort != null && !rmiRegPort.equals("")) {
             rmiName = "//:" + rmiRegPort + "/" + rmiName;
          }
 
          try {
-            ResourceManagerImpl obj = new ResourceManagerImpl();
+
+            ResourceManagerImpl obj = new ResourceManagerImpl(rmiName2);
             Naming.rebind(rmiName, obj);
             System.out.println("RM bound");
          }
@@ -107,7 +112,9 @@ implements ResourceManager {
       }
 
 
-   public ResourceManagerImpl() throws RemoteException {
+   public ResourceManagerImpl(String rmiName) throws RemoteException {
+      this.rmiName=rmiName;
+
       checkDirectoryDB();
       recover();  //recover db
 
@@ -387,8 +394,7 @@ implements ResourceManager {
             case FLIGHT:
             if(actFlights.containsFlight(op.getKey())){ //if the flight exits, we just update it
                Flight f = actFlights.getFlight(op.getKey());
-               flights.addFlight(op.getKey(), new Flight(f.getFlightNum(), f.getPrice(), f.getNumSeats(), f.getNumAvail(), -1));
-               f.setLastTransactionUpdate(-1);
+               flights.addFlight(op.getKey(), new Flight(f.getFlightNum(), f.getPrice(), f.getNumSeats(), f.getNumAvail()));
                actFlights.addFlight(op.getKey(), f);
             }else  //otherwise we need to delete it in non-active db
                flights.deleteFlight(op.getKey());
@@ -398,8 +404,7 @@ implements ResourceManager {
             case CAR:
                if(actCars.containsCar(op.getKey())){
                   Car c = actCars.getCar(op.getKey());
-                  cars.addCar(op.getKey(), new Car(c.getLocation(), c.getPrice(), c.getNumCars(), c.getNumAvail(), -1));
-                  c.setLastTransactionUpdate(-1);
+                  cars.addCar(op.getKey(), new Car(c.getLocation(), c.getPrice(), c.getNumCars(), c.getNumAvail()));
                   actCars.addCar(op.getKey(), c);
                }else
                   cars.deleteCar(op.getKey());
@@ -409,8 +414,7 @@ implements ResourceManager {
             case HOTEL:
                if(actHotels.containsHotel(op.getKey())){
                   Hotel h = actHotels.getHotel(op.getKey());
-                  hotels.addHotel(op.getKey(), new Hotel(h.getLocation(), h.getPrice(), h.getNumRooms(), h.getNumAvail(), -1));
-                  h.setLastTransactionUpdate(-1);
+                  hotels.addHotel(op.getKey(), new Hotel(h.getLocation(), h.getPrice(), h.getNumRooms(), h.getNumAvail()));
                   actHotels.addHotel(op.getKey(), h);
                }else
                   hotels.deleteHotel(op.getKey());
@@ -644,6 +648,9 @@ implements ResourceManager {
    // ADMINISTRATIVE INTERFACE
    public boolean addFlight(int xid, String flightNum, int numSeats, int price)
    throws RemoteException, TransactionAbortedException, InvalidTransactionException {
+      if(!checkRmiName(FLIGHT))
+         throw new TransactionAbortedException(xid, "Access to invalid component rmiName="+rmiName);
+
       checkTransactionID(xid);
 
 
@@ -661,7 +668,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the flight in the table
-      actFlights.addFlight(flightNum, price, numSeats, xid);
+      actFlights.addFlight(flightNum, price, numSeats);
 
 
       //keep tracking of operations
@@ -677,6 +684,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(FLIGHT))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -716,6 +725,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(HOTEL))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -733,7 +744,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the hotel in the table
-      actHotels.addRooms(location, price, numRooms, xid);
+      actHotels.addRooms(location, price, numRooms);
 
 
       //keep tracking of operations
@@ -748,6 +759,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(HOTEL))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -778,6 +791,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CAR))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -795,7 +810,7 @@ implements ResourceManager {
 
       //the transaction got the X-lock
       //add/uptade the Car in the table
-      actCars.addCars(location, price, numCars, xid);
+      actCars.addCars(location, price, numCars);
 
       //keep tracking of operations
       ArrayList<OperationPair> operations = activeTransactions.get(xid);
@@ -809,6 +824,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CAR))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -839,6 +856,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CUSTOMER) && !checkRmiName(RESERVATION))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -870,6 +889,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CUSTOMER) && !checkRmiName(RESERVATION))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -955,6 +976,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(FLIGHT))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -971,11 +994,7 @@ implements ResourceManager {
 
       //transaction got the S-lock
       if(actFlights.containsFlight(flightNum)){
-         if(actFlights.isSameTransaction(flightNum, xid)){
             return actFlights.getFlight(flightNum).getNumAvail();
-         }else{
-            return flights.getFlight(flightNum).getNumAvail();
-         }
       }else
          return -1;
 
@@ -985,6 +1004,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(FLIGHT))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1001,11 +1022,7 @@ implements ResourceManager {
 
       //transaction got the S-lock
       if(actFlights.containsFlight(flightNum)){
-         if(actFlights.isSameTransaction(flightNum, xid)){
             return actFlights.getFlight(flightNum).getPrice();
-         }else{
-            return flights.getFlight(flightNum).getPrice();
-         }
       }else
          return -1;
    }
@@ -1014,6 +1031,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(FLIGHT))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1039,6 +1058,9 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(HOTEL))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
+
       checkTransactionID(xid);
 
       try{
@@ -1063,6 +1085,10 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(HOTEL))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
+
+
       checkTransactionID(xid);
 
       try{
@@ -1089,6 +1115,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(HOTEL))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1117,6 +1145,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CAR))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1133,11 +1163,7 @@ implements ResourceManager {
 
       //transaction got the S-lock
       if(actCars.containsCar(location)){
-         if(actCars.isSameTransaction(location, xid)){
             return actCars.getCar(location).getNumAvail();
-         }else{
-            return cars.getCar(location).getNumAvail();
-         }
       }else
          return -1;
    }
@@ -1146,6 +1172,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CAR))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1162,11 +1190,7 @@ implements ResourceManager {
 
       //transaction got the S-lock
       if(actCars.containsCar(location)){
-         if(actCars.isSameTransaction(location, xid)){
             return actCars.getCar(location).getPrice();
-         }else{
-            return cars.getCar(location).getPrice();
-         }
       }else
          return -1;
    }
@@ -1175,6 +1199,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CAR))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1201,6 +1227,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CUSTOMER) && ! checkRmiName(RESERVATION))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1242,6 +1270,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(FLIGHT))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1295,6 +1325,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(CAR))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1351,6 +1383,8 @@ implements ResourceManager {
    throws RemoteException,
    TransactionAbortedException,
    InvalidTransactionException {
+      if(!checkRmiName(HOTEL))
+         throw new TransactionAbortedException(xid, "Access to invalid component");
 
       checkTransactionID(xid);
 
@@ -1435,7 +1469,7 @@ implements ResourceManager {
    private boolean waitForShutDown(){
       while(activeTransactions.size()>0){
       try {
-         Thread.sleep(1000);                 //1000 milliseconds is one second.
+         Thread.sleep(1000);       //wait for 1000 milliseconds
       } catch(InterruptedException ex) {
          Thread.currentThread().interrupt();
       }
@@ -1444,6 +1478,11 @@ implements ResourceManager {
    }
 
 
+   private boolean checkRmiName(String operation){
+      if(rmiName.equals(ResourceManager.DefaultRMIName) || rmiName.equals(operation))
+         return true;
+      else return false;
+   }
 
    public String toStringNonActiveDB(String nameTable){
       String s="table: "+nameTable+"\n";

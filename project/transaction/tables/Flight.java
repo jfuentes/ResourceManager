@@ -10,7 +10,6 @@ public class Flight implements Serializable{
   private int numAvail;
   //add more attributes needed to guarantee ACID
 
-  private int lastTransactionUpdate; //-1 if it was commited
 
   //constructor
   public Flight(String flightNum, int price, int numSeats, int numAvail){
@@ -18,15 +17,6 @@ public class Flight implements Serializable{
     this.price=price;
     this.numSeats=numSeats;
     this.numAvail=numAvail;
-    lastTransactionUpdate=-1;
-  }
-
-  public Flight(String flightNum, int price, int numSeats, int numAvail, int xid){
-    this.flightNum=flightNum;
-    this.price=price;
-    this.numSeats=numSeats;
-    this.numAvail=numAvail;
-    lastTransactionUpdate=xid;
   }
 
 
@@ -67,13 +57,6 @@ public class Flight implements Serializable{
     return flightNum+"  "+price+"  "+numSeats+"  "+numAvail;
   }
 
-  public void setLastTransactionUpdate(int t){
-     lastTransactionUpdate=t;
-  }
-
-  public int getLastTransactionUpdate(){
-     return lastTransactionUpdate;
- }
 
   public Flight clone(){
      return new Flight(flightNum, price,  numSeats, numAvail);

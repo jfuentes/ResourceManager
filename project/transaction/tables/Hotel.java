@@ -10,23 +10,14 @@ public class Hotel implements Serializable{
 	private int numRooms;
 	private int numAvail;
 
-	private int lastTransactionUpdate; //-1 if it was commited
 
 	public Hotel(String location, int price, int numRooms, int numAvail){
 		this.location = location;
 		this.price = price;
 		this.numRooms = numRooms;
 		this.numAvail = numAvail;
-		lastTransactionUpdate=-1;
 	}
 
-	public Hotel(String location, int price, int numRooms, int numAvail, int xid){
-		this.location = location;
-		this.price = price;
-		this.numRooms = numRooms;
-		this.numAvail = numAvail;
-		lastTransactionUpdate=xid;
-	}
 
 	public String getLocation(){
 		return location;
@@ -60,13 +51,6 @@ public class Hotel implements Serializable{
 		this.numAvail = numAvail;
 	}
 
-	public void setLastTransactionUpdate(int t){
-     lastTransactionUpdate=t;
-  }
-
-  public int getLastTransactionUpdate(){
-     return lastTransactionUpdate;
-  }
 
 	public String toString(){
 		return location+"  "+price+"  "+numRooms+"  "+numAvail;

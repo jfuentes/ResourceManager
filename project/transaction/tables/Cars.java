@@ -17,7 +17,7 @@ public class Cars implements Serializable{
 	 * Methods to add, update, remove and search tuples on the table
 	 **/
 
-	public boolean addCars(String location, int price, int numCars, int xid){
+	public boolean addCars(String location, int price, int numCars){
 		if(table.containsKey(location)){
 			//the car already exists, we update
 			Car car = table.get(location);
@@ -25,10 +25,9 @@ public class Cars implements Serializable{
 				car.setPrice(price); //update to the new price
 			car.setNumCars(numCars+car.getNumCars()); //add the new cars
 			car.setNumAvail(numCars+car.getNumAvail()); //add the new cars
-			car.setLastTransactionUpdate(xid);
 			table.put(location, car);
 		}else
-			table.put(location, new Car(location, price, numCars, numCars, xid));
+			table.put(location, new Car(location, price, numCars, numCars));
 		return true;
 	}
 
@@ -74,11 +73,6 @@ public class Cars implements Serializable{
          return false;
 	}
 
-	public boolean isSameTransaction(String location, int xid){
-     if(containsCar(location))
-         return table.get(location).getLastTransactionUpdate()==xid;
-     else return false;
- 	}
 
 	public boolean cancelReservation(String location){
      if(table.containsKey(location)){
