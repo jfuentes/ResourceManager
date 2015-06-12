@@ -22,8 +22,8 @@ Bound to RM
 [1] 	LINE--1 call commit xid
 [1] Calling commit
 [1] commit returned: true
-[2] queryRoomsPrice returned: 150
 [1] 	LINE--1 return true
+[2] queryRoomsPrice returned: 150
 [2] 	LINE--2 return 150
 [2] 	LINE--2 exit
 [2] Test exiting.

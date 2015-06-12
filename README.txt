@@ -17,11 +17,11 @@
     * make clean
     * make server
     * make client
-    * rmiregistry -J-classpath -J.. 2100 &
+    * rmiregistry -J-classpath -J.. 2101 &
     * cd ../test.part1
     * setenv CLASSPATH .:gnujaxp.jar
     * /usr/bin/javac RunTests.java
-    * java -DrmiPort=1099 RunTests MASTER.xml
+    * java -DrmiPort=2101 RunTests MASTER.xml
 
 Make sure the "java" command and the "rm" command in RunTests.java and Client.java are properly set based on your shell environment. The results will be put in ./results/grades.txt. If you want, you can modify the file project/test.part1/MASTER.xml to change the scripts you want to test. You are STRONGLY suggested to run the scripts ONE BY ONE.
 

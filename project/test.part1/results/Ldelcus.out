@@ -51,8 +51,8 @@ Bound to RM
 [2] Calling queryCars
 [1] 	LINE--1 call commit xid
 [1] Calling commit
-[2] queryCars returned: 300
 [1] commit returned: true
+[2] queryCars returned: 300
 [1] 	LINE--1 return true
 [2] 	LINE--2 return 300
 [2] 	LINE--2 exit
